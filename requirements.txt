@@ -1,0 +1,3 @@
+numpy
+python_speech_features
+tensorflow

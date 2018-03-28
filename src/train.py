@@ -1,15 +1,22 @@
-import numpy as np
-import tensorflow as tf
 import time
 
-import DataSet
+import numpy as np
+import tensorflow as tf
+
+from src import DataSet
+
 #from DataSet import read_number_data_sets
 
 
 train_home_dictionary = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/audio_numbers'
 
+# HYPER PARAMETERS
+
 # mfcc
-num_features = 247
+# num_features =  247
+num_features = 13
+num_context = 9
+
 
 # Accounting the 0th index +  space + blank label = 28 characters
 num_classes = ord('z') - ord('a') + 1 + 1 + 1
@@ -20,34 +27,33 @@ batch_size = 8
 
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
-# Input tensor - shape = (batch_size)
-x_input = tf.placeholder(tf.float32, [None, None, num_features], name='x_input')
-
-# label of data
-y_input = tf.placeholder(tf.float32, [num_classes], name='y_input')
 
 
-def input_placehodler():
+def input_placehodler(shape):
     """
-
-    :return:
+        Creates tensorflow placeholder as input to network
+        :param: shape of input placeholder
+        :return: placehodler of given shape
     """
-    return tf.placeholder(tf.float32, [None, None, num_features], name='x_input')
+    # Input tensor - shape
+    return tf.placeholder(tf.float32, shape, name='x_input')
 
 
-def sequence_length_placehodler():
+def sequence_length_placehodler(shape):
     """"
-
+        Creates tensorflow placehodler of input audio sequence length of given shape
     """
     # 1d array of size [batch_size]
-    return tf.placeholder(tf.int32, [None], name="sequence_length")
+    return tf.placeholder(tf.int32, shape, name="sequence_length")
 
 
 def label_sparse_placehodler():
     """
-
+        Creates tensorflow placehodler for target text label as sparse matrix.
+        Sparse placeholder is needed by CTC op.
     """
-    return tf.sparse_placeholder(tf.int32, name='sparse_label')
+    # label of data
+    return tf.sparse_placeholder(tf.int32, name='y_sparse_label')
 
 
 def weights_and_biases(num_hidden, num_classes):
@@ -70,7 +76,7 @@ def weights_and_biases(num_hidden, num_classes):
     return weights, biases
 
 
-def lstm_nerual_network(weights, biases, num_hidden, num_layers, sequence_placehodler):
+def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequence_placehodler):
     """
 
     :param weights:
@@ -125,9 +131,8 @@ def ctc_loss_function(logits, sparse_target, sequence_length):
 
 def network_optimizer(cost):
     """
-
-    :param cost:
-    :return:
+        Defines optimizer for tensorflow graph
+        :param cost: minimizing for given cost
     """
 
     optimizer = tf.train.AdamOptimizer().minimize(cost)
@@ -167,14 +172,17 @@ def compute_label_error_rate(decoded_sparse_label, sparse_target):
 
 def train_network(dataset):
 
+    graph = tf.Graph()
+
     # Create tensorflow placeholders for network
-    x = input_placehodler()
+    # n_input + (2 * n_input * n_context)]
+    x = input_placehodler([None, None, num_features + 2*num_features*num_context])
     y_sparse = label_sparse_placehodler()
-    sequence_length = sequence_length_placehodler()
+    sequence_length = sequence_length_placehodler([None])
 
     weights, baises = weights_and_biases(num_hidden, num_classes)
 
-    logits = lstm_nerual_network(weights, baises, num_hidden, num_layers, sequence_length)
+    logits = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length)
 
     cost = ctc_loss_function(logits, y_sparse, sequence_length)
 
@@ -211,7 +219,7 @@ def train_network(dataset):
 
                 train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
 
-                feed = {x_input : train_x, y_sparse : train_y_sparse, sequence_length : train_sequence_length}
+                feed = {x : train_x, y_sparse : train_y_sparse, sequence_length : train_sequence_length}
 
                 batch_cost, _ = session.run([cost, optimizer], feed)
 

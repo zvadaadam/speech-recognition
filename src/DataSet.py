@@ -8,14 +8,11 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
-import os
 import numpy as np
-
-import audio_utils
-import text_utils
-
+import os
 from sklearn.model_selection import train_test_split
 
+from src import audio_utils, text_utils
 
 # Datasets - encapsulate DataSet objects
 Datasets = collections.namedtuple("Datasets", ["train", "validation", "test"])
@@ -40,20 +37,6 @@ class DataSet(object):
         # tracking ?
         self._epochs_completed = 0
 
-    # def __init__(self, audios, labels, sparse_target, sequence_length, num_examples):
-    #     self._audios = audios
-    #     self._labels = labels
-    #     self._sparse_target = sparse_target
-    #     self._sequence_length = sequence_length
-    #     self._num_examples = num_examples
-    #
-    #
-    #     # tracking ?
-    #     self._index_in_epoch = 0
-    #
-    #     # tracking ?
-    #     self._epochs_completed = 0
-
 
     @property
     def audios(self):
@@ -62,14 +45,6 @@ class DataSet(object):
     @property
     def labels(self):
         return self._labels
-
-    @property
-    def sparse_targets(self):
-        return self._sparse_targets
-
-    @property
-    def sequence_lengths(self):
-        return self._sequence_lengths
 
     @property
     def num_examples(self):
