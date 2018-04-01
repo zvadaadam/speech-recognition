@@ -3,14 +3,18 @@ import scipy.io.wavfile as wav
 import python_speech_features as sf
 from sklearn.preprocessing import scale
 
+import matplotlib.pyplot as plt
+from librosa import display
+
 
 # TODO: refactoring to ctc format will be requierd (sparse_tuple)
 def audio_to_feature_vectors(wav_filename, numcep):
-    """"
-        Returns audio and its transcripts. Audio is preprocessed by MFCC.
-        @:param numcep -  number of mfcc features, 13 or 26
+    """"Returns audio and its transcripts. Audio is preprocessed by MFCC.
 
-        @:return mffc_features - ndarray of shape (numcep, num_vectors)
+    Args:
+        numcep:  number of mfcc features, 13 or 26
+    Returns:
+        mffc_features: ndarray of shape (numcep, num_vectors)
     """
 
     # Loading the given file
@@ -43,6 +47,12 @@ def audiofile_to_input_vector(audio_filename, numcep, numcontext):
 
     # Get mfcc coefficients
     orig_inputs = sf.mfcc(audio, samplerate=fs, numcep=numcep)
+
+    # plt.figure(figsize=(12 / 2, 4 / 2))
+    # display.specshow(np.swapaxes(orig_inputs, 0, 1), sr=fs, x_axis='time', y_axis='mel')
+    # plt.title('MFCC')
+    # plt.colorbar()
+    # plt.tight_layout()
 
     # We only keep every second feature (BiRNN stride = 2)
     #orig_inputs = orig_inputs[::2]
@@ -101,6 +111,12 @@ def audiofile_to_input_vector(audio_filename, numcep, numcontext):
 
         train_inputs[time_slice] = np.concatenate((past, now, future))
         assert(len(train_inputs[time_slice]) == numcep + 2 * numcep * numcontext)
+
+    # plt.figure(figsize=(12 / 2, 4 / 2))
+    # display.specshow(np.swapaxes(train_inputs, 0, 1), sr=fs, x_axis='time', y_axis='mel')
+    # plt.title('MFCC')
+    # plt.colorbar()
+    # plt.tight_layout()
 
     # Scale/standardize the inputs
     # This can be done more efficiently in the TensorFlow graph

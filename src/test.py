@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import python_speech_features as sf
 from librosa import display
+import python_speech_features as sf
 from sklearn.preprocessing import scale
 
 from src.DataSet import read_data_sets

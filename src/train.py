@@ -1,7 +1,8 @@
 import time
-
+import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+
 
 from src import DataSet
 
@@ -22,11 +23,12 @@ num_context = 9
 num_classes = ord('z') - ord('a') + 1 + 1 + 1
 num_epoches = 100
 num_hidden = 100
-num_layers = 1
+num_layers = 3
 batch_size = 8
 
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
+tf.logging.set_verbosity(tf.logging.INFO)
 
 
 def input_placehodler(shape):
@@ -76,7 +78,10 @@ def weights_and_biases(num_hidden, num_classes):
     return weights, biases
 
 
-def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequence_placehodler):
+def init_state_placeholder():
+    return tf.placeholder(tf.float32, [num_layers, 2, batch_size, num_hidden])
+
+def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequence_placehodler, init_state):
     """
 
     :param weights:
@@ -87,14 +92,23 @@ def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequen
     :return:
     """
 
+    state_per_layer_list = tf.unstack(init_state, axis=0)
+    rnn_tuple_state = tuple(
+        [tf.nn.rnn_cell.LSTMStateTuple(state_per_layer_list[idx][0], state_per_layer_list[idx][1])
+         for idx in range(num_layers)]
+    )
 
-    cell = tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True)
+    cells = []
+    for _ in range(num_layers):
+        cells.append(tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True))
 
-    stack = tf.contrib.rnn.MultiRNNCell([cell] * num_layers, state_is_tuple=True)
+    #cell = tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True)
+
+    stack = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
 
     # x_input [batch, max_time, num_classes]
     # The second output is the last state and we will no use that
-    outputs, _ = tf.nn.dynamic_rnn(stack, x_input, sequence_placehodler, dtype=tf.float32)
+    outputs, state = tf.nn.dynamic_rnn(stack, x_input, sequence_placehodler, dtype=tf.float32, initial_state=rnn_tuple_state)
 
     # shape = tf.shape(x_input)
     # batch_s, max_time_steps = shape[0]
@@ -108,7 +122,7 @@ def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequen
     # Back to original shape
     logits = tf.reshape(logits, [batch_size, -1, num_classes])
 
-    return logits
+    return logits, state
 
 
 
@@ -121,7 +135,7 @@ def ctc_loss_function(logits, sparse_target, sequence_length):
     :return:
     """
 
-    # Requiered by CTC [max_timesteps, batch_size, num_classes]
+    # Requiered by CTC [max_timesteps, batch_size, num_classes], Convert form batch-major to time-major
     logits = tf.transpose(logits, [1, 0, 2])
 
     loss = tf.nn.ctc_loss(sparse_target, logits, sequence_length)
@@ -179,10 +193,11 @@ def train_network(dataset):
     x = input_placehodler([None, None, num_features + 2*num_features*num_context])
     y_sparse = label_sparse_placehodler()
     sequence_length = sequence_length_placehodler([None])
+    init_state = init_state_placeholder()
 
     weights, baises = weights_and_biases(num_hidden, num_classes)
 
-    logits = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length)
+    logits, state = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length, init_state)
 
     cost = ctc_loss_function(logits, y_sparse, sequence_length)
 
@@ -204,6 +219,9 @@ def train_network(dataset):
     #tf.logging.set_verbosity(tf.logging.INFO)
 
     #with tf.Session(graph=graph) as session:
+
+    fig = plt.figure()
+
     with tf.Session() as session:
 
         session.run(tf.global_variables_initializer())
@@ -215,13 +233,20 @@ def train_network(dataset):
 
             start = time.time()
 
+            current_state = np.zeros((num_layers, 2, batch_size, num_hidden))
+
             for batch in range(int(dataset.train.num_examples / batch_size)):
 
                 train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
 
-                feed = {x : train_x, y_sparse : train_y_sparse, sequence_length : train_sequence_length}
+                feed = {
+                    x : train_x,
+                    y_sparse : train_y_sparse,
+                    sequence_length : train_sequence_length,
+                    init_state: current_state
+                }
 
-                batch_cost, _ = session.run([cost, optimizer], feed)
+                batch_cost, _, current_state = session.run([cost, optimizer, state], feed)
 
                 epoch_loss += batch_cost * batch_size
 
