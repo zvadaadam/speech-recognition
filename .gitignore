@@ -156,3 +156,6 @@ fabric.propertiess
 
 # training data
 /audio_numbers
+
+# tensoboard generated data
+/tensoboard

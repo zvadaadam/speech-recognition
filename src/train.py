@@ -1,10 +1,13 @@
+import sys
 import time
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-
+import yaml
 
 from src import DataSet
+
+from src.model import LSTMCTC, CTCNetwork
 
 #from DataSet import read_number_data_sets
 
@@ -16,7 +19,7 @@ train_home_dictionary = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/
 # mfcc
 # num_features =  247
 num_features = 13
-num_context = 9
+num_context = 4
 
 
 # Accounting the 0th index +  space + blank label = 28 characters
@@ -30,6 +33,7 @@ FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
 tf.logging.set_verbosity(tf.logging.INFO)
 
+logs_path = "./tensorboard"
 
 def input_placehodler(shape):
     """
@@ -81,7 +85,7 @@ def weights_and_biases(num_hidden, num_classes):
 def init_state_placeholder():
     return tf.placeholder(tf.float32, [num_layers, 2, batch_size, num_hidden])
 
-def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequence_placehodler, init_state):
+def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequence_placehodler):
     """
 
     :param weights:
@@ -92,11 +96,11 @@ def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequen
     :return:
     """
 
-    state_per_layer_list = tf.unstack(init_state, axis=0)
-    rnn_tuple_state = tuple(
-        [tf.nn.rnn_cell.LSTMStateTuple(state_per_layer_list[idx][0], state_per_layer_list[idx][1])
-         for idx in range(num_layers)]
-    )
+    # state_per_layer_list = tf.unstack(init_state, axis=0)
+    # rnn_tuple_state = tuple(
+    #     [tf.nn.rnn_cell.LSTMStateTuple(state_per_layer_list[idx][0], state_per_layer_list[idx][1])
+    #      for idx in range(num_layers)]
+    # )
 
     cells = []
     for _ in range(num_layers):
@@ -108,7 +112,7 @@ def lstm_nerual_network(x_input, weights, biases, num_hidden, num_layers, sequen
 
     # x_input [batch, max_time, num_classes]
     # The second output is the last state and we will no use that
-    outputs, state = tf.nn.dynamic_rnn(stack, x_input, sequence_placehodler, dtype=tf.float32, initial_state=rnn_tuple_state)
+    outputs, state = tf.nn.dynamic_rnn(stack, x_input, sequence_placehodler, dtype=tf.float32)
 
     # shape = tf.shape(x_input)
     # batch_s, max_time_steps = shape[0]
@@ -188,16 +192,19 @@ def train_network(dataset):
 
     graph = tf.Graph()
 
+
     # Create tensorflow placeholders for network
     # n_input + (2 * n_input * n_context)]
-    x = input_placehodler([None, None, num_features + 2*num_features*num_context])
+    #x = input_placehodler([None, None, num_features + 2*num_features*num_context])
+    x = input_placehodler([None, None, num_features])
     y_sparse = label_sparse_placehodler()
     sequence_length = sequence_length_placehodler([None])
     init_state = init_state_placeholder()
 
     weights, baises = weights_and_biases(num_hidden, num_classes)
 
-    logits, state = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length, init_state)
+    #logits, state = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length, init_state)
+    logits, _ = lstm_nerual_network(x, weights, baises, num_hidden, num_layers, sequence_length)
 
     cost = ctc_loss_function(logits, y_sparse, sequence_length)
 
@@ -220,11 +227,14 @@ def train_network(dataset):
 
     #with tf.Session(graph=graph) as session:
 
-    fig = plt.figure()
+    tf.summary.scalar("cost", cost)
+    tf.summary.scalar("label_error_rate", label_error_rate)
 
     with tf.Session() as session:
 
         session.run(tf.global_variables_initializer())
+
+        writer = tf.summary.FileWriter(logs_path, graph=session.graph)
 
         for epoch in range(num_epoches):
 
@@ -236,6 +246,7 @@ def train_network(dataset):
             current_state = np.zeros((num_layers, 2, batch_size, num_hidden))
 
             for batch in range(int(dataset.train.num_examples / batch_size)):
+                summary_op = tf.summary.merge_all()
 
                 train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
 
@@ -243,12 +254,15 @@ def train_network(dataset):
                     x : train_x,
                     y_sparse : train_y_sparse,
                     sequence_length : train_sequence_length,
-                    init_state: current_state
+                    #init_state: current_state
                 }
 
-                batch_cost, _, current_state = session.run([cost, optimizer, state], feed)
+                batch_cost, _, summary = session.run([cost, optimizer, summary_op], feed)
+                #batch_cost, _, _, summary = session.run([cost, optimizer, state, summary_op], feed)
 
                 epoch_loss += batch_cost * batch_size
+
+                writer.add_summary(summary, epoch * batch_size + batch)
 
                 ler_loss += session.run(label_error_rate, feed) * batch_size
 
@@ -272,9 +286,30 @@ def train_network(dataset):
                              0, 0, time.time() - start))
 
 
+def main(config_path=None):
+
+    if config_path is None:
+        print("Processing default config.")
+
+        dataset = DataSet.read_number_data_sets(train_home_dictionary)
+
+        train_network(dataset)
+    else:
+        print("Processing CONFIG in filename: %s", config_path)
+
+        with open(config_path, 'r') as f:
+            config = yaml.load(f)
+
+            model_name = config_path['model_name']
+            corpus = config_path['corpus']
+
+
+
 if __name__ == "__main__":
+    args = sys.argv
+    if len(args) == 2:
+        main(config_path=args[1])
+    else:
+        main()
 
-    dataset = DataSet.read_number_data_sets(train_home_dictionary)
-
-    train_network(dataset)
 

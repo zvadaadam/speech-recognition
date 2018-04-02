@@ -110,7 +110,7 @@ def read_number_data_sets(train_data_dir):
                 wav_path = os.path.join(dir, filename)
 
                 #audio_features = audio_utils.audio_to_feature_vectors(wav_path, 13)
-                audio_features = audio_utils.audiofile_to_input_vector(wav_path, 13, 9)
+                audio_features = audio_utils.audiofile_to_input_vector(wav_path, 13, 4)
                 print(audio_features.shape)
                 text_target = text_utils.get_refactored_transcript(i, is_filename=False)
 
