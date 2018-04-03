@@ -1,10 +1,10 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from librosa import display
+import numpy as np
 import python_speech_features as sf
+from librosa import display
 from sklearn.preprocessing import scale
 
-from src.DataSet import read_data_sets
+from src.dataset.DataSet import read_data_sets
 
 num_classes = 10 # digits 0 - 9
 path_to_training_data = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/audio_numbers/'

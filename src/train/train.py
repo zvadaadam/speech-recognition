@@ -1,13 +1,11 @@
 import sys
 import time
-import matplotlib.pyplot as plt
+
 import numpy as np
 import tensorflow as tf
 import yaml
 
-from src import DataSet
-
-from src.model import LSTMCTC, CTCNetwork
+from src.dataset import DataSet
 
 #from DataSet import read_number_data_sets
 

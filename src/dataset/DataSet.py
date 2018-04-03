@@ -8,11 +8,12 @@ from __future__ import division
 from __future__ import print_function
 
 import collections
-import numpy as np
 import os
+
+import numpy as np
 from sklearn.model_selection import train_test_split
 
-from src import audio_utils, text_utils
+from src.utils import audio_utils, text_utils
 
 # Datasets - encapsulate DataSet objects
 Datasets = collections.namedtuple("Datasets", ["train", "validation", "test"])

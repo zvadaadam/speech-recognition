@@ -1,42 +1,35 @@
 import sys
 import time
-import matplotlib.pyplot as plt
+
 import numpy as np
 import tensorflow as tf
 import yaml
 
-from src import DataSet
-
+from src.config.ConfigReader import ConfigReader
+from src.dataset import DataSet
 from src.model.LSTMCTC import LSTMCTC
 
 #from DataSet import read_number_data_sets
 
 
-train_home_dictionary = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/audio_numbers'
-
-# HYPER PARAMETERS
-
-# mfcc
-# num_features =  247
-num_features = 13
-num_context = 4
-
-
-# Accounting the 0th index +  space + blank label = 28 characters
-num_classes = ord('z') - ord('a') + 1 + 1 + 1
-num_epoches = 100
-num_hidden = 100
-num_layers = 3
-batch_size = 8
-
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
-tf.logging.set_verbosity(tf.logging.INFO)
 
-logs_path = "./tensorboard"
+def train_network(dataset, config_reader):
 
+    tf.logging.set_verbosity(tf.logging.INFO)
 
-def train_network(dataset):
+    logs_path = config_reader.get_tensorboard_logs_path()
+
+    # Get Network parameters
+    num_classes = config_reader.get_num_classes()
+    num_epoches = config_reader.get_num_epoches()
+    num_hidden = config_reader.get_num_hidden()
+    num_layers = config_reader.get_num_layers()
+    batch_size = config_reader.get_batch_size()
+    num_features = config_reader.get_num_features()
+    num_context = config_reader.get_num_context()
+
 
     graph = tf.Graph()
 
@@ -112,9 +105,14 @@ def main(config_path=None):
     if config_path is None:
         print("Processing default config.")
 
+        config_path = './config/lstm_ctc.yml'
+
+        config_reader = ConfigReader(config_path)
+
+        train_home_dictionary = config_reader.get_train_directory_path()
         dataset = DataSet.read_number_data_sets(train_home_dictionary)
 
-        train_network(dataset)
+        train_network(dataset, config_reader)
     else:
         print("Processing CONFIG in filename: %s", config_path)
 
@@ -127,6 +125,7 @@ def main(config_path=None):
 
 
 if __name__ == "__main__":
+
     args = sys.argv
     if len(args) == 2:
         main(config_path=args[1])
