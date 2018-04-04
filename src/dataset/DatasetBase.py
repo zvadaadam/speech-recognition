@@ -73,11 +73,11 @@ class DatasetBase(object):
             audios.append(audio_features)
             labels.append(text_target)
 
-        output_target = np.asarray(labels[start:end])
+        output_target = np.asarray(labels)
         sparse_targets = text_utils.sparse_tuple_from(output_target)
 
-        # Pad Audio batch
-        train_input, train_length = audio_utils.pad_sequences(audios[start:end])
+        # pad audio batch
+        train_input, train_length = audio_utils.pad_sequences(audios)
 
         return train_input, sparse_targets, train_length
 
