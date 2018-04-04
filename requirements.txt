@@ -2,3 +2,5 @@ numpy
 python_speech_features
 tensorflow
 PyYAML
+sklearn
+tqdm

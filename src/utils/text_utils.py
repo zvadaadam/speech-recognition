@@ -6,7 +6,7 @@ SPACE_INDEX = 0
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
 
-def get_refactored_transcript(txt, is_filename=True):
+def get_refactored_transcript(txt, is_filename=True, is_digit=True):
     """"
         Fucntion reads text file and refactors its text. It extract unwanted characters(.,?,!,\n, etc.).
         Converts text to array for characters and map them to indexs.
@@ -18,7 +18,11 @@ def get_refactored_transcript(txt, is_filename=True):
     if is_filename:
         txt = read_txt(txt)
 
-    simple_text = simplify_text(text_number(txt))
+    simple_text = ''
+    if not is_digit:
+        simple_text = simplify_text(txt)
+    else:
+        simple_text = simplify_text(text_number(txt))
 
     text_by_chars = text_to_chars(simple_text)
 
