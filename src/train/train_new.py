@@ -8,6 +8,7 @@ import yaml
 from src.config.ConfigReader import ConfigReader
 from src.dataset import DataSet
 from src.model.LSTMCTC import LSTMCTC
+from src.dataset.VCTKDataset import VCTKDataset
 
 #from DataSet import read_number_data_sets
 
@@ -58,12 +59,14 @@ def train_network(dataset, config_reader):
 
             current_state = np.zeros((num_layers, 2, batch_size, num_hidden))
 
-            for batch in range(int(dataset.train.num_examples / batch_size)):
+            #for batch in range(int(dataset.train.num_examples / batch_size)):
+            for batch in range(int(dataset.num_examples / batch_size)):
 
                 #summary_op = tf.summary.merge(lstm_ctc.summaries)
                 summary_op = tf.summary.merge_all()
 
-                train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
+                #train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
+                train_x, train_y_sparse, train_sequence_length = dataset.next_batch(batch_size)
 
                 feed = {
                     lstm_ctc.input_placeholder : train_x,
@@ -90,8 +93,10 @@ def train_network(dataset, config_reader):
 
                 print('Decoded: %s' % str_decoded)
 
-            epoch_loss /= dataset.train.num_examples
-            ler_loss /= dataset.train.num_examples
+            #epoch_loss /= dataset.train.num_examples
+            #ler_loss /= dataset.train.num_examples
+            epoch_loss /= dataset.num_examples
+            ler_loss /= dataset.num_examples
 
             log = "Epoch {}/{}, train_cost = {:.3f}, train_ler = {:.3f}, " \
                   "val_cost = {:.3f}, val_ler = {:.3f}, time = {:.3f}"
@@ -105,26 +110,34 @@ def main(config_path=None):
     if config_path is None:
         print("Processing default config.")
 
-        config_path = './config/lstm_ctc.yml'
-
+        config_path = './src/config/lstm_ctc_VCTK.yml'
         config_reader = ConfigReader(config_path)
 
-        train_home_dictionary = config_reader.get_train_directory_path()
-        dataset = DataSet.read_number_data_sets(train_home_dictionary)
 
-        train_network(dataset, config_reader)
     else:
-        print("Processing CONFIG in filename: %s", config_path)
+        print("Processing CONFIG in filename: ", config_path)
+        config_reader = ConfigReader(config_path)
 
-        with open(config_path, 'r') as f:
-            config = yaml.load(f)
 
-            model_name = config_path['model_name']
-            corpus = config_path['corpus']
+    train_home_dictionary = config_reader.get_train_directory_path()
+
+    # dataset = DataSet.read_number_data_sets(train_home_dictionary)
+    dataset = VCTKDataset(config_reader.get_train_directory_path(), config_reader.get_num_features(),
+                          config_reader.get_num_context())
+
+    train_network(dataset, config_reader)
 
 
 
 if __name__ == "__main__":
+
+    import os
+
+    print(os.environ['PYTHONPATH'])
+
+    import sys
+
+    print(sys.path)
 
     args = sys.argv
     if len(args) == 2:

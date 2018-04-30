@@ -18,10 +18,16 @@ curl -O http://homepages.inf.ed.ac.uk/jyamagis/release/VCTK-Corpus.tar.gz
 
 ## Requirements
 ```
-  # TODO
+# TODO
 ```
 
 ## Run Training Phase
 ```
-  # TODO: MAGIC so far ❤️
+# TODO: MAGIC so far ❤️
+```
+
+### Tensorboard
+For better monitoring and visualization of training phase run tensorboard command.
+```
+tensorboard --logdir ./tensorboard    
 ```

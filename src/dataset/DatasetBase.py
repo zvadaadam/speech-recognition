@@ -63,9 +63,10 @@ class DatasetBase(object):
         audios = []
         labels = []
 
-        print("Preprocessing audio files for batch of size", batch_size)
+        #print("Preprocessing audio files for batch of size", batch_size)
 
-        for audio_filename, label_filename in tqdm(zip(self._audio_filenames[start:end], self._label_filenames[start:end]), total=(end - start)):
+        #for audio_filename, label_filename in tqdm(zip(self._audio_filenames[start:end], self._label_filenames[start:end]), total=(end - start)):
+        for audio_filename, label_filename in zip(self._audio_filenames[start:end], self._label_filenames[start:end]):
             audio_features = audio_utils.audiofile_to_input_vector(audio_filename, self.num_features, self.num_context)
 
             text_target = text_utils.get_refactored_transcript(label_filename, is_filename=True, is_digit=False)
