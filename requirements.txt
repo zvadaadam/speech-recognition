@@ -5,4 +5,4 @@ PyYAML
 sklearn
 tqdm
 librosa
-
+scikit-learn

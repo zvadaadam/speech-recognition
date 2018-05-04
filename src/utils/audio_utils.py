@@ -262,7 +262,7 @@ def pad_sequences(sequences, maxlen=None, dtype=np.float32,
 def stack_frame(input_list, num_stack, num_skip, progressbar=False):
     """Stack & skip some frames. This implementation is based on
        https://arxiv.org/abs/1507.06947.
-           Sak, Haşim, et al.
+           Sak, Hasim, et al.
            "Fast and accurate recurrent neural network acoustic models for speech recognition."
            arXiv preprint arXiv:1507.06947 (2015).
     Args:
