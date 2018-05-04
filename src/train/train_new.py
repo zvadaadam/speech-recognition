@@ -17,8 +17,6 @@ FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
 def train_network(dataset, config_reader):
 
-    tf.logging.set_verbosity(tf.logging.INFO)
-
     logs_path = config_reader.get_tensorboard_logs_path()
 
     # Get Network parameters
@@ -43,7 +41,8 @@ def train_network(dataset, config_reader):
     # set TF logging verbosity
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
+    #with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
+    with tf.Session() as session:
 
         session.run(tf.global_variables_initializer())
 
