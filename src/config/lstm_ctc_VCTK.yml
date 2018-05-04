@@ -20,5 +20,5 @@ hyperparameter:
     dropout_input: 0.8
     dropout_hidden: 0.5
 path:
-    tensorboard_logs: ../tensorboard
+    tensorboard_logs: ./tensorboard
     train_directory:  /Users/adamzvada/Desktop/VCTK-Corpus
