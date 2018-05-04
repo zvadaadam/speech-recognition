@@ -1,5 +1,6 @@
 import numpy as np
 from tqdm import tqdm
+import random
 
 from src.utils import audio_utils, text_utils
 
@@ -45,13 +46,10 @@ class DatasetBase(object):
             # count finished epoches
             self._epochs_completed += 1
 
-            # preparse the shuffle of filename data
-            perm = np.arange(self._num_examples)
-            np.random.shuffle(perm)
-
-            # shuffle stored filename data
-            self._audio_filenames = self._audio_filenames[perm]
-            self._label_filenames = self._label_filenames[perm]
+            # perfrom shuffle
+            files = list(zip(self._audio_filenames, self._label_filenames))
+            random.shuffle(files)
+            self._audio_filenames, self._label_filenames = zip(*files)
 
             # start next epoch
             start = 0

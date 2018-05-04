@@ -15,7 +15,6 @@ from src.dataset.VCTKDataset import VCTKDataset
 
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
-
 def train_network(dataset, config_reader):
 
     tf.logging.set_verbosity(tf.logging.INFO)
@@ -44,7 +43,7 @@ def train_network(dataset, config_reader):
     # set TF logging verbosity
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    with tf.Session() as session:
+    with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
 
         session.run(tf.global_variables_initializer())
 

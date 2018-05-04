@@ -57,10 +57,14 @@ class VCTKDataset(DatasetBase):
             audio_paths = [os.path.join(speaker_audio_path, speaker_filename) for speaker_filename in os.listdir(speaker_audio_path)]
             label_paths = [os.path.join(speaker_label_path, speaker_filename) for speaker_filename in os.listdir(speaker_label_path)]
 
+            audio_paths.sort()
+            label_paths.sort()
+
             # concatenate speaker filenames
             self._audio_filenames = self._audio_filenames + audio_paths
             self._label_filenames = self._label_filenames + label_paths
 
+        print()
 
         self._num_examples = len(self._audio_filenames)
 
