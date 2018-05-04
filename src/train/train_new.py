@@ -105,25 +105,37 @@ def train_network(dataset, config_reader):
                              0, 0, time.time() - start))
 
 
-def main(config_path=None):
+def main(config_path=None, dataset_path=None):
 
     if config_path is None:
         print("Processing default config.")
 
         config_path = './src/config/lstm_ctc_VCTK.yml'
         config_reader = ConfigReader(config_path)
-
-
     else:
         print("Processing CONFIG in filename: ", config_path)
         config_reader = ConfigReader(config_path)
 
 
-    train_home_dictionary = config_reader.get_train_directory_path()
+    if dataset_path is not None:
+        print("Setting default train dataset path.")
 
-    # dataset = DataSet.read_number_data_sets(train_home_dictionary)
-    dataset = VCTKDataset(config_reader.get_train_directory_path(), config_reader.get_num_features(),
-                          config_reader.get_num_context())
+        train_home_dictionary = dataset_path
+    else:
+        train_home_dictionary = config_reader.get_train_directory_path()
+
+        print("Setting train dataset path: ", train_home_dictionary)
+
+
+    if config_reader.get_corpus_name() == 'VCTK':
+        print("Integrating VCTK corpus.")
+
+        dataset = VCTKDataset(train_home_dictionary, config_reader.get_num_features(), config_reader.get_num_context())
+    else:
+        print("Integrating digit corpus.")
+
+        dataset = DataSet.read_number_data_sets(train_home_dictionary)
+
 
     train_network(dataset, config_reader)
 
@@ -142,6 +154,8 @@ if __name__ == "__main__":
     args = sys.argv
     if len(args) == 2:
         main(config_path=args[1])
+    elif len(args) == 3:
+        main(config_path=args[1], dataset_path=args[2])
     else:
         main()
 
