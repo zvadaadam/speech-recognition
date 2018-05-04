@@ -91,7 +91,7 @@ def train_network(dataset, config_reader):
                 # Replacing space label to space
                 str_decoded = str_decoded.replace(chr(ord('a') - 1), ' ')
 
-                print('Decoded: %s' % str_decoded)
+                print('Decoded: %s' % str_decoded, )
 
             #epoch_loss /= dataset.train.num_examples
             #ler_loss /= dataset.train.num_examples

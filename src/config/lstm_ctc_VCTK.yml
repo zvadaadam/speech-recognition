@@ -9,8 +9,8 @@ feature:
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
-    num_layers: 3
-    batch_size: 4
+    num_layers: 1
+    batch_size: 8
     num_epoches: 100
     optimizer: Adam
     learning_rate: 0.9

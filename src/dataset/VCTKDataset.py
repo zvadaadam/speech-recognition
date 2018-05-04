@@ -17,10 +17,10 @@ class VCTKDataset(DatasetBase):
         DatasetBase.__init__(self, num_features, num_context)
         self.dataset_path = dataset_path
 
-        self.read_vctk_dataset()
+        self.read_vctk_dataset(num_speakers=1)
 
 
-    def read_vctk_dataset(self, dataset_path=None):
+    def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
         """" Retrives filenames from VCTK structues corpus and stores them in VCTKDataset object
         Args:
             dataset_path (string) - given path to home directory of dataset
@@ -36,6 +36,12 @@ class VCTKDataset(DatasetBase):
 
         # gets list of directories for diffrent speakers
         speakers_dirs = os.listdir(audio_dataset_path)
+
+        if num_speakers is not None:
+            speakers_dirs = speakers_dirs[0:num_speakers]
+            print('Number of speakers: ', num_speakers)
+        else:
+            print('All speakers')
 
         for speaker_dir in tqdm(speakers_dirs, total=len(speakers_dirs)):
 

@@ -12,5 +12,5 @@ if __name__ == "__main__":
     elif len(args) == 3:
         train_new.main(config_path=args[1], dataset_path=args[2])
     else:
-        train_new.main
+        train_new.main()
 
