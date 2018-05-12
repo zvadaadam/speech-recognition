@@ -16,8 +16,6 @@ class DigitDataset(DatasetBase):
         self.dataset_path = dataset_path
 
 
-
-
     def read_digit_dataset(self, dataset_path):
 
         for i in range(10):
@@ -28,3 +26,5 @@ class DigitDataset(DatasetBase):
             for filename in filenames:
                 wav_path = os.path.join(dir, filename)
                 self.audio_filenames.append(wav_path)
+
+        self.num_examples = self.audio_filenames.count()

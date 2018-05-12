@@ -42,7 +42,8 @@ class CTCNetwork(object):
         # length of input audio [batch_size]
         self.input_seq_len_placeholder = tf.placeholder(tf.int32, [None], name="sequence_length")
 
-        # TODO: DROPOUT
+        self.dropout_placeholder = tf.placeholder(tf.float32)
+
         # TODO: LEARNING_RATE
 
         return self.input_placeholder, self.label_sparse_placeholder, self.input_seq_len_placeholder

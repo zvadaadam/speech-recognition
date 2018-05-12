@@ -60,6 +60,9 @@ class ConfigReader(object):
     def get_num_epoches(self):
         return self.hyperparameters['num_epoches']
 
+    def get_dropout_hidden(self):
+        return self.hyperparameters['dropout_hidden']
+
     # -----PATH-----
 
     def get_tensorboard_logs_path(self):

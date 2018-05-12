@@ -30,12 +30,15 @@ class LSTMCTC(CTCNetwork):
         # generates placeholders for network
         self.generate_placeholders()
 
-        # crates weights and biases for network
-        self._weights_and_biases()
-
         cells = []
         for _ in range(self.num_layers):
-            cells.append(tf.contrib.rnn.LSTMCell(self.num_hidden, state_is_tuple=True))
+
+            cell = tf.contrib.rnn.LSTMCell(self.num_hidden, state_is_tuple=True)
+
+            cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=self.dropout_placeholder)
+
+            cells.append(cell)
+
 
         stack = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
 
@@ -43,12 +46,16 @@ class LSTMCTC(CTCNetwork):
         # The second output is the last state and we will no use that
         outputs, state = tf.nn.dynamic_rnn(stack, self.input_placeholder, self.input_seq_len_placeholder, dtype=tf.float32)
 
+        # crates weights and biases for last fully connected layer
+        self._weights_and_biases()
+
         input_shape = tf.shape(self.input_placeholder)
         batch_s, max_time_steps = input_shape[0], input_shape[1]
 
         # Reshaping to apply the same weights over the timesteps [batch_size*max_time, num_hidden?] - fully connected
         outputs = tf.reshape(outputs, [-1, self.num_hidden])
 
+        # Adding fully connected layer on the end
         logits = tf.add(tf.matmul(outputs, self.weights), self.biases)
         tf.summary.histogram("predictions", logits)
 
@@ -58,7 +65,7 @@ class LSTMCTC(CTCNetwork):
         # convert to [max_timesteps, batch_size, num_classes]
         self.logits = tf.transpose(self.logits, (1, 0, 2))
 
-        return logits, state
+        return outputs, state
 
     def _weights_and_biases(self):
         """"

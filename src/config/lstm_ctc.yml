@@ -9,16 +9,15 @@ feature:
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
-    num_layers: 3
+    num_layers: 2
     batch_size: 8
-    num_epoches: 100
+    num_epoches: 150
     optimizer: Adam
     learning_rate: 0.9
     weight_init: 0.1
     clip_grad: 5.0
     clip_activation: 50
-    dropout_input: 0.8
-    dropout_hidden: 0.5
+    dropout_hidden: 1
 path:
-    tensorboard_logs: ../tensorboard
-    train_directory:  ../audio_numbers
+    tensorboard_logs: ./tensorboard_digits
+    train_directory:  ./audio_numbers
