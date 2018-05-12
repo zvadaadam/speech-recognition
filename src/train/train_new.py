@@ -45,6 +45,7 @@ def train_network(dataset, config_reader):
     # saving the trainnned model
     saver = tf.train.Saver()
 
+
     #with tf.Session(config=tf.ConfigProto(log_device_placement=True)) as session:
     with tf.Session() as session:
 
@@ -64,14 +65,14 @@ def train_network(dataset, config_reader):
             current_state = np.zeros((num_layers, 2, batch_size, num_hidden))
 
 
-            for batch in range(int(dataset.train.num_examples / batch_size)):
-            #for batch in range(int(dataset.num_examples / batch_size)):
+            #for batch in range(int(dataset.train.num_examples / batch_size)):
+            for batch in range(int(dataset.num_examples / batch_size)):
 
                 #summary_op = tf.summary.merge(lstm_ctc.summaries)
                 summary_op = tf.summary.merge_all()
 
-                train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
-                #train_x, train_y_sparse, train_sequence_length = dataset.next_batch(batch_size)
+                #train_x, train_y_sparse, train_sequence_length = dataset.train.next_batch(batch_size)
+                train_x, train_y_sparse, train_sequence_length = dataset.next_batch(batch_size)
 
                 feed = {
                     lstm_ctc.input_placeholder : train_x,
@@ -99,10 +100,10 @@ def train_network(dataset, config_reader):
 
                 print('Decoded: %s' % str_decoded, )
 
-            epoch_loss /= dataset.train.num_examples
-            ler_loss /= dataset.train.num_examples
-            #epoch_loss /= dataset.num_examples
-            #ler_loss /= dataset.num_examples
+            #epoch_loss /= dataset.train.num_examples
+            #ler_loss /= dataset.train.num_examples
+            epoch_loss /= dataset.num_examples
+            ler_loss /= dataset.num_examples
 
             log = "Epoch {}/{}, train_cost = {:.3f}, train_ler = {:.3f}, " \
                   "val_cost = {:.3f}, val_ler = {:.3f}, time = {:.3f}"
@@ -111,10 +112,10 @@ def train_network(dataset, config_reader):
                              0, 0, time.time() - start))
 
             # Create a checkpoint in every iteration
-            saver.save(session, './trained_models/one_speaker_model', global_step=epoch)
+            saver.save(session, './trained_models/three_speaker_model', global_step=epoch)
 
         # save a final checkpoint of our model
-        saver.save(session, './trained_models/one_speaker_model_final')
+        saver.save(session, './trained_models/three_speaker_model_final')
 
 
 
@@ -124,8 +125,8 @@ def main(config_path=None, dataset_path=None):
     if config_path is None:
         print("Processing default config.")
 
-        #config_path = './src/config/lstm_ctc_VCTK.yml'
-        config_path = './src/config/lstm_ctc.yml'
+        config_path = './src/config/lstm_ctc_VCTK.yml'
+        #config_path = './src/config/lstm_ctc.yml'
         config_reader = ConfigReader(config_path)
     else:
         print("Processing CONFIG in filename: ", config_path)

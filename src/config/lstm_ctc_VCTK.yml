@@ -18,7 +18,7 @@ hyperparameter:
     clip_grad: 5.0
     clip_activation: 50
     dropout_input: 0.8
-    dropout_hidden: 0.5
+    dropout_hidden: 0.8
 path:
     tensorboard_logs: ./tensorboard
     train_directory:  /Users/adamzvada/Desktop/VCTK-Corpus

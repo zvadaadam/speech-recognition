@@ -17,7 +17,7 @@ class VCTKDataset(DatasetBase):
         DatasetBase.__init__(self, num_features, num_context)
         self.dataset_path = dataset_path
 
-        self.read_vctk_dataset(num_speakers=1)
+        self.read_vctk_dataset(num_speakers=3)
 
 
     def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
