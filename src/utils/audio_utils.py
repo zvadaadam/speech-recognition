@@ -5,9 +5,6 @@ import scipy.io.wavfile as wav
 import python_speech_features as sf
 from sklearn.preprocessing import scale
 
-import matplotlib.pyplot as plt
-from librosa import display
-
 
 # TODO: refactoring to ctc format will be requierd (sparse_tuple)
 def audiofile_to_input_vector(wav_filename, numcep, numcontext):

@@ -1,8 +1,7 @@
-numpy
+numpy==1.13.3
 python_speech_features
-tensorflow
+tensorflow==1.4.0
 PyYAML
 tqdm
 librosa
 scikit-learn
-matplotlib

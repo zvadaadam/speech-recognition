@@ -19,7 +19,7 @@ class VCTKDataset(DatasetBase):
         self.dataset_path = dataset_path
 
         #self.read_vctk_dataset(num_speakers=3)
-        self.read_and_cache_vctk_dataset(num_speakers=3)
+        self.read_and_cache_vctk_dataset(num_speakers=1)
 
 
     def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
@@ -89,7 +89,7 @@ class VCTKDataset(DatasetBase):
         else:
             print('All speakers')
 
-        for speaker_dir in tqdm(speakers_dirs, total=len(speakers_dirs)):
+        for speaker_dir in speakers_dirs:
 
             # get full paths for speakers
             speaker_audio_path = os.path.join(audio_dataset_path, speaker_dir)
@@ -115,6 +115,8 @@ class VCTKDataset(DatasetBase):
 
         self._audios = []
         self._labels = []
+
+        print('Preprocessing anf Feature extraction...')
 
         for audio_filename, label_filename in tqdm(zip(self._audio_filenames, self._label_filenames), total=self._num_examples):
             audio_features = audio_utils.audiofile_to_input_vector(audio_filename, self.num_features, self.num_context)

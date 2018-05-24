@@ -17,7 +17,9 @@ hyperparameter:
     weight_init: 0.1
     clip_grad: 5.0
     clip_activation: 50
+    dropout_input: 1
     dropout_hidden: 1
 path:
-    tensorboard_logs: ./tensorboard_digits
+    tensorboard_logs: ./tensorboard_two_layers_digits
     train_directory:  ./audio_numbers
+    trained_model:  ./trained_models/digit

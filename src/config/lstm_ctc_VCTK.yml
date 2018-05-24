@@ -9,8 +9,8 @@ feature:
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
-    num_layers: 1
-    batch_size: 8
+    num_layers: 3
+    batch_size: 64
     num_epoches: 100
     optimizer: Adam
     learning_rate: 0.9
@@ -18,7 +18,8 @@ hyperparameter:
     clip_grad: 5.0
     clip_activation: 50
     dropout_input: 0.8
-    dropout_hidden: 0.8
+    dropout_hidden: 1
 path:
     tensorboard_logs: ./tensorboard
     train_directory:  /Users/adamzvada/Desktop/VCTK-Corpus
+    trained_model:  ./trained_models/vctk_12

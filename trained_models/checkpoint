@@ -1,2 +1,2 @@
-model_checkpoint_path: "three_speaker_model-0"
-all_model_checkpoint_paths: "three_speaker_model-0"
+model_checkpoint_path: "digit_model-0"
+all_model_checkpoint_paths: "digit_model-0"

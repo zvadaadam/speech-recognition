@@ -20,8 +20,6 @@ class ConfigReader(object):
             self.hyperparameters = self.config['hyperparameter']
             self.paths = self.config['path']
 
-        print(self.hyperparameters['num_classes'])
-
     # -----HEADER-----
 
     def get_model_name(self):
@@ -70,3 +68,6 @@ class ConfigReader(object):
 
     def get_train_directory_path(self):
         return self.paths['train_directory']
+
+    def get_trained_model_path(self):
+        return self.paths['trained_model']

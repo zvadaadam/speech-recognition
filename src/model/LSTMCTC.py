@@ -23,8 +23,8 @@ class LSTMCTC(CTCNetwork):
 
 
     def define(self):
-        """" Creates Tensorflow graph model
-
+        """
+            Creates Tensorflow graph model
         """
 
         # generates placeholders for network
