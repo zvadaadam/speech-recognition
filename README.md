@@ -13,8 +13,10 @@ __MI-PYT TODO__:
 - [ ] Tests
 
 
-### Training data
-In order to train our neural network we have to download training data, we use __VCTK Corpus__.  
+## Training data
+In order to train our neural network we have to download training data.
+I'm using __VCTK Corpus__ which will do the trick for my purpose. If you are aiming to lower error rates I strongly recommend using more training data.  
+⚠️ VCTK Corpus - 15GB
 ```
 # LINUX
 wget http://homepages.inf.ed.ac.uk/jyamagis/release/VCTK-Corpus.tar.gz
@@ -23,7 +25,7 @@ curl -O http://homepages.inf.ed.ac.uk/jyamagis/release/VCTK-Corpus.tar.gz
 ```
 
 ### Requirements
-The speech recognition was developed using Python 3.6.2. and project requirements are located in ```requirements.txt```. 
+The speech recognition was developed using Python 3.6.2. and project requirements are located in ```requirements.txt```.
 ```
 numpy==1.13.3
 python_speech_features
@@ -37,7 +39,7 @@ scikit-learn
 ### Install
 
 We use miniconda for installing the dependencies, https://conda.io/miniconda.html
-Create conda environment and install the dependencies in requirements.txt. 
+Create conda environment and install the dependencies in requirements.txt.
 
 ```
 conda create --name speech python=3.6.2
@@ -69,8 +71,8 @@ python3 __main__.py --train --vctk --dataset={path_to_vctk_dataset}/VCTK-Corpus 
 ```
 
 ### Decoding
-To use speech recognition we run python main with predefined parameters shown below. 
-Essential is to provided trained model saved in dictionary ```trained_model```, the path is provided in config file. 
+To use speech recognition we run python main with predefined parameters shown below.
+Essential is to provided trained model saved in dictionary ```trained_model```, the path is provided in config file.
 Training network with CTC function is time-consuming and in order to get the newest trained model, try to run ```git pull```.   
 ##### Numbers
 ```
@@ -97,4 +99,3 @@ For better monitoring and visualization of training phase run tensorboard comman
 ```
 tensorboard --logdir ./tensorboard    
 ```
-
