@@ -155,7 +155,16 @@ crashlytics-build.properties
 fabric.propertiess
 
 # training data
-/audio_numbers
+/audio_numbers/
+
 
 # tensoboard generated data
 /tensoboard
+
+# model
+/tensorboard_two_layers_digits
+/trained_models
+
+.idea/markdown-navigator.xml
+.idea/markdown-navigator/
+

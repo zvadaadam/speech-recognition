@@ -3,6 +3,16 @@
 Speech recognition implemented by using __Tensorflow__ for deep learning.
 We are using __recurrent neural network__ with __LSTM__ nodes and in order to deal with sequencing problem we apply __CTC__(Connectionist Temporal Classification).
 
+__MI-PYT TODO__:
+- [ ] Code Refactor
+- [ ] Improved sound preprocessing and feature extraction
+- [ ] Training model based on Attention Mechanism
+- [ ] Training model based on Neural Turing Machine
+- [ ] Automated generation of datasets from audiobooks
+- [ ] Documentation
+- [ ] Tests
+
+
 ### Training data
 In order to train our neural network we have to download training data, we use __VCTK Corpus__.  
 ```
@@ -34,7 +44,7 @@ conda create --name speech python=3.6.2
 source activate speech
 pip install -U -r requirements.txt
 ```
-If you come across any erros with conda install, you may use ```pip install -u *``` instead.  
+If you come across any errors with conda install, you may use ```pip install -u *``` instead.  
 
 
 ### Run Training Phase
@@ -56,7 +66,6 @@ python3 __main__.py --train --vctk --dataset={path_to_vctk_dataset}/VCTK-Corpus 
 --vctk - uses the vctk training
 --dataset - path to training dataset
 --config - given the config file for training
-
 ```
 
 ### Decoding
@@ -77,6 +86,10 @@ python3 __main__.py --decode --vctk --config=src/config/lstm_ctc_VCTK.yml --deco
 --vctk - uses the digit decoding
 --config - path to config file of trained model
 --decodefile - path to file which will be decoded
+```
+Concrete example of decoding
+```
+python __main__.py --decode --vctk --config=./src/config/lstm_ctc_VCTK.yml --decodefile=/Users/adamzvada/Desktop/VCTK-Corpus/wav48/p227/p227_001.wav
 ```
 
 #### Tensorboard
