@@ -1,7 +1,8 @@
 import yaml
 
+from speechrecognition.helper.singleton import Singleton
 
-class ConfigReader(object):
+class ConfigReader(object, metaclass=Singleton):
     """" ConfigReader - parse yml config file
     Args:
 

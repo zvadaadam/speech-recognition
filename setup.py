@@ -1,4 +1,4 @@
-rom setuptools import setup, find_packages
+from setuptools import setup, find_packages
 
 with open('README.rst') as f:
     long_description = ''.join(f.readlines())
@@ -7,13 +7,13 @@ with open('README.rst') as f:
 setup(
     name='speech-recognition',
     version='0.1',
-    keywords='Speech Recogntion',
-    description='End2End Speech Recognition',
+    keywords='Speech Recognition',
+    description='End2End Speech Recognition using Deep Learning',
     long_description=long_description,
     author='Adam Zvada',
-    author_email='zvadaada@fit.cvut.cz',
+    author_email='zvadaada@gmail.com',
     license='MIT',
-    url='TODO',
+    url='https://github.com/zvadaadam',
     zip_safe=False,
     packages=find_packages(),
     classifiers=[
