@@ -2,6 +2,7 @@ model_name: multilayer_lstm_ctc
 corpus:
     name: VCTK
     label_type: text
+    lang: ENG
 feature:
     name: mfcc
     num_context: 4

@@ -2,6 +2,7 @@ model_name: multilayer_lstm_ctc
 corpus:
     name: digits
     label_type: numbers
+    lang: ENG
 feature:
     name: mfcc
     num_context: 4

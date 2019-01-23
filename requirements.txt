@@ -1,6 +1,6 @@
-numpy==1.13.3
+numpy
 python_speech_features
-tensorflow==1.4.0
+tensorflow
 PyYAML
 tqdm
 librosa
