@@ -1,12 +1,16 @@
 model_name: multilayer_lstm_ctc
-corpus:
+
+dataset:
     name: digits
     label_type: numbers
     lang: ENG
+    dataset_path: ./audio_numbers
+
 feature:
     name: mfcc
+    feature_size: 13
     num_context: 4
-    num_features: 13
+
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
@@ -18,9 +22,8 @@ hyperparameter:
     weight_init: 0.1
     clip_grad: 5.0
     clip_activation: 50
-    dropout_input: 1
-    dropout_hidden: 1
-path:
-    tensorboard_logs: ./tensorboard_two_layers_digits
-    train_directory:  ./audio_numbers
-    trained_model:  ./trained_models/digit
+    dropout_prob: 1
+
+model:
+    tensorboard_path: ./tensorboard_two_layers_digits
+    model_path:  ./trained_models/digit

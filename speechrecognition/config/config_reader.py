@@ -16,57 +16,74 @@ class ConfigReader(object, metaclass=Singleton):
         with open(config_path, 'r') as f:
             self.config = yaml.load(f)
             self.model_name = self.config['model_name']
-            self.corpus = self.config['corpus']
+            self.dataset = self.dataset['dataset']
             self.features = self.config['feature']
             self.hyperparameters = self.config['hyperparameter']
             self.paths = self.config['path']
 
     # -----HEADER-----
 
-    def get_model_name(self):
+    @property
+    def model_name(self):
         return self.model_name
 
-    # -----CORPUS-----
+    # -----DATASET-----
 
-    def get_corpus_name(self):
-        return self.corpus['name']
+    @property
+    def dataset_name(self):
+        return self.dataset['name']
 
-    def get_corpus_label_type(self):
-        return self.corpus['label_type']
+    @property
+    def dataset_label_type(self):
+        return self.dataset['label_type']
 
     # -----FEATURES-----
 
-    def get_num_features(self):
-        return self.features['num_features']
+    @property
+    def feature_size(self):
+        return self.features['feature_size']
 
-    def get_num_context(self):
+    @property
+    def num_context(self):
         return self.features['num_context']
 
     # -----HYPERPARAMATERS-----
 
-    def get_num_classes(self):
+    @property
+    def num_classes(self):
         return self.hyperparameters['num_classes']
 
-    def get_num_hidden(self):
+    @property
+    def num_hidden(self):
         return self.hyperparameters['num_hidden']
 
-    def get_num_layers(self):
+    @property
+    def num_layers(self):
         return self.hyperparameters['num_layers']
 
-    def get_batch_size(self):
+    @property
+    def batch_size(self):
         return self.hyperparameters['batch_size']
 
-    def get_num_epoches(self):
+    @property
+    def num_epoches(self):
         return self.hyperparameters['num_epoches']
 
-    def get_dropout_hidden(self):
-        return self.hyperparameters['dropout_hidden']
+    @property
+    def learning_rate(self):
+        return self.hyperparameters['learning_rate']
 
-    # -----PATH-----
+    @property
+    def dropout_prob(self):
+        return self.hyperparameters['dropout_prob']
 
+    # -----MODEL-----
+
+    @property
     def get_tensorboard_logs_path(self):
         return self.paths['tensorboard_logs']
 
+    @property
     def get_train_directory_path(self):
         return self.paths['train_directory']
 

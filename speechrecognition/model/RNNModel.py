@@ -4,10 +4,11 @@ from speechrecognition.config.config_reader import ConfigReader
 
 class RNNModel(BaseModel):
 
-    def __init__(self, config_path):
-        super(RNNModel, self).__init__(config_path)
+    def __init__(self, config):
+        super(RNNModel, self).__init__(config)
 
-        self.config = ConfigReader(config_path)
+        #self.config = ConfigReader(config_path)
+        self.config = config
 
         self.build_model()
 
@@ -89,6 +90,7 @@ class RNNModel(BaseModel):
             cell = tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True)
             # Add Dropout
             cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=dropout_placeholder)
+
             cells.append(cell)
         # stack all RNNs
         stack = tf.contrib.rnn.MultiRNNCell(cells, state_is_tuple=True)
