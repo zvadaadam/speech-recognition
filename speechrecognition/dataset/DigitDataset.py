@@ -1,4 +1,4 @@
-from src.dataset.DatasetBase import DatasetBase
+from speechrecognition.dataset.dataset_base import DatasetBase
 
 import os
 

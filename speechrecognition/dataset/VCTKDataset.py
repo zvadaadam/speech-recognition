@@ -1,8 +1,8 @@
 import os
 from tqdm import tqdm
 
-from src.dataset.DatasetBase import DatasetBase
-from src.utils import audio_utils, text_utils
+from speechrecognition.dataset.dataset_base import DatasetBase
+from speechrecognition.utils import audio_utils, text_utils
 
 
 class VCTKDataset(DatasetBase):

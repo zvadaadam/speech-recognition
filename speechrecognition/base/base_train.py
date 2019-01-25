@@ -12,11 +12,11 @@ class BaseTrain(object):
         self.session.run(self.init)
 
     def train(self):
-        for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.sess), self.config.num_epochs + 1, 1):
+        for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1):
             # run epoch training
             self.train_epoch()
             # increase epoche counter
-            self.sess.run(self.model.increment_cur_epoch_tensor)
+            self.session.run(self.model.increment_cur_epoch_tensor)
 
     def train_epoch(self):
         raise NotImplementedError

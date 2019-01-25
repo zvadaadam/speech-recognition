@@ -12,35 +12,28 @@ class RNNModel(BaseModel):
 
         self.build_model()
 
-    @property
+
     def x(self):
         self.input_placeholder
 
-    @property
     def y(self):
         self.label_sparse_placeholder
 
-    @property
     def seq_length(self):
         self.input_seq_len_placeholder
 
-    @property
     def dropout_prob(self):
         self.dropout_placeholder
 
-    @property
     def loss(self):
         self.loss
 
-    @property
     def optimizer(self):
         self.optimizer
 
-    @property
     def decoder(self):
         self.decoder
 
-    @property
     def label_error(self):
         self.label_error
 
@@ -118,9 +111,9 @@ class RNNModel(BaseModel):
 
     def ctc_decoder(self, stack_output):
 
-        decoded, _ = tf.nn.ctc_greedy_decoder(stack_output, self.input_seq_len_placeholder)[0]
+        decoded, _ = tf.nn.ctc_greedy_decoder(stack_output, self.input_seq_len_placeholder)
 
-        return decoded
+        return decoded[0]
 
     def label_error_rate(self, decoded):
 

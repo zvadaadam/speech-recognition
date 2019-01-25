@@ -1,5 +1,6 @@
-import tqdm
+from tqdm import tqdm
 from speechrecognition.base.base_train import BaseTrain
+from speechrecognition.utils.text_utils import index_to_text
 
 
 class SpeechTrainer(BaseTrain):
@@ -8,7 +9,7 @@ class SpeechTrainer(BaseTrain):
         super(SpeechTrainer, self).__init__(session, model, dataset, config)
 
     def train_epoch(self):
-        num_epoche = self.config.num_epoche()
+        num_epoche = self.config.num_epoches()
 
         losses = []
         errors = []
@@ -17,7 +18,8 @@ class SpeechTrainer(BaseTrain):
             losses.append(loss)
             errors.append(error)
 
-            print(decoded)
+            decoded_chars = index_to_text(decoded)
+            print(f'Epoch#{i}: {decoded_chars}')
 
 
     def train_step(self):
@@ -38,7 +40,3 @@ class SpeechTrainer(BaseTrain):
         ], feed)
 
         return loss, decoded, error
-
-
-
-

@@ -2,18 +2,27 @@ import tensorflow as tf
 
 class BaseModel(object):
 
-    def __init__(self, config_path):
-        self.config_path = config_path
+    def __init__(self, config):
+        self.config = config
+        # init the global step
+        self.init_global_step()
+        # init the epoch counter
+        self.init_cur_epoch()
 
     # save current checkpoint
     def save(self, sess):
         print("Saving model...")
-        self.saver.save(sess, self.config.checkpoint_dir, self.global_step_tensor)
+        self.saver.save(sess, self.config.get_trained_model_path(), self.global_step_tensor)
         print("Model saved")
+
+        # init the global step
+        self.init_global_step()
+        # init the epoch counter
+        self.init_cur_epoch()
 
     # load latest checkpoint
     def load(self, sess):
-        latest_checkpoint = tf.train.latest_checkpoint(self.config.checkpoint_dir)
+        latest_checkpoint = tf.train.latest_checkpoint(self.config.get_trained_model_path())
         if latest_checkpoint:
             print("Loading model checkpoint {} ...\n".format(latest_checkpoint))
             self.saver.restore(sess, latest_checkpoint)

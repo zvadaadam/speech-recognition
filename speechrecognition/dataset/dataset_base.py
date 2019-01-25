@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import random
 
-from src.utils import audio_utils, text_utils
+from speechrecognition.utils import audio_utils, text_utils
 
 class DatasetBase(object):
 
