@@ -47,8 +47,8 @@ class DigitDataset(DatasetBase):
 
         print(f'Loaded {len(self.audios)} digit records.')
 
-        self._audios = np.asarray(self._audios)
-        self._labels = np.asarray(self._audios)
+        #self._audios = np.asarray(self._audios)
+        #self._labels = np.asarray(self._labels)
         self._num_examples = len(self._audios)
 
 

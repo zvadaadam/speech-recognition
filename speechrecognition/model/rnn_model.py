@@ -7,9 +7,7 @@ class RNNModel(BaseModel):
     def __init__(self, config):
         super(RNNModel, self).__init__(config)
 
-        #self.config = ConfigReader(config_path)
         self.config = config
-
         self.build_model()
 
 
@@ -48,7 +46,8 @@ class RNNModel(BaseModel):
         num_classes = self.config.num_classes()
 
         rnn_output = self.build_rnn_layer(num_layers, num_hidden, self.input_placeholder, self.input_seq_len_placeholder, self.dropout_placeholder)
-        logistic_output = self.logistic_layer(rnn_output, num_classes)
+
+        logistic_output = self.logistic_layer(rnn_output, num_hidden, num_classes)
 
         self.loss = self.ctc_loss_function(logistic_output)
 
@@ -93,9 +92,34 @@ class RNNModel(BaseModel):
 
         return outputs
 
-    def logistic_layer(self, stack_output, num_classes):
+    def logistic_layer(self, stack_output, num_hidden, num_classes):
 
-        return tf.contrib.layers.fully_connected(stack_output, num_classes, activation_fn=None)
+        # return tf.contrib.layers.fully_connected(stack_output, num_classes, activation_fn=None)
+
+        with tf.name_scope('weights'):
+            self.weights = tf.Variable(tf.truncated_normal([num_hidden, num_classes], stddev=0.1))
+
+        with tf.name_scope('biases'):
+            self.biases = tf.Variable(tf.constant(0., shape=[num_classes]))
+
+        input_shape = tf.shape(self.input_placeholder)
+        batch_s, max_time_steps = input_shape[0], input_shape[1]
+
+        # Reshaping to apply the same weights over the timesteps [batch_size*max_time, num_hidden?] - fully connected
+        outputs = tf.reshape(stack_output, [-1, num_hidden])
+
+        # Adding fully connected layer on the end
+        logits = tf.add(tf.matmul(outputs, self.weights), self.biases)
+
+        # Back to original shape
+        self.logits = tf.reshape(logits, [batch_s, -1, num_classes])
+
+        # convert to [max_timesteps, batch_size, num_classes]
+        self.logits = tf.transpose(self.logits, (1, 0, 2))
+
+        return self.logits
+
+
 
     def ctc_loss_function(self, stack_output):
 

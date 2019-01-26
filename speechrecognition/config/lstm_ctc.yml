@@ -4,7 +4,7 @@ dataset:
     name: digits
     label_type: numbers
     lang: ENG
-    dataset_path: ./audio_numbers
+    dataset_path: /Users/adamzvada/Documents/School/BP/SpeechRecognition/audio_numbers
 
 feature:
     name: mfcc
@@ -17,6 +17,7 @@ hyperparameter:
     num_layers: 2
     batch_size: 8
     num_epoches: 150
+    num_iterations: 10
     optimizer: Adam
     learning_rate: 0.9
     weight_init: 0.1

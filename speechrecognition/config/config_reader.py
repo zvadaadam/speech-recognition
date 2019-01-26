@@ -62,6 +62,9 @@ class ConfigReader(object): #, metaclass=Singleton):
     def num_epoches(self):
         return self.hyperparameters['num_epoches']
 
+    def num_iterations(self):
+        return self.hyperparameters['num_iterations']
+
     def learning_rate(self):
         return self.hyperparameters['learning_rate']
 

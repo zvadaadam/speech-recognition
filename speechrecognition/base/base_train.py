@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tqdm import tqdm
 
 class BaseTrain(object):
 
@@ -12,7 +13,7 @@ class BaseTrain(object):
         self.session.run(self.init)
 
     def train(self):
-        for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1):
+        for cur_epoch in tqdm(range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1)):
             # run epoch training
             self.train_epoch()
             # increase epoche counter
