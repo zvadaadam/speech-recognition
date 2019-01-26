@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 from tqdm import tqdm
 import random
 
@@ -124,6 +125,24 @@ class DatasetBase(object):
         train_input, train_length = audio_utils.pad_sequences(audios)
 
         return train_input, sparse_targets, train_length
+
+    def load_pickle_dataset(self, name_dataset):
+
+        with open(name_dataset + '_audios', 'rb') as f:
+            self._audios = pickle.load(f)
+
+        with open(name_dataset + '_labeles', 'rb') as f:
+            self._labels = pickle.load(f)
+
+    def save_pickle_dataset(self, name_dataset):
+
+        # sfile = bz2.BZ2File('smallerfile', 'w')
+
+        with open(name_dataset + '_audios', 'wb') as f:
+            pickle.dump(self.audios, f)
+
+        with open(name_dataset + '_labeles', 'wb') as f:
+            pickle.dump(self.labels, f)
 
 
 

@@ -14,12 +14,15 @@ class VCTKDataset(DatasetBase):
     """
 
 
-    def __init__(self, dataset_path, num_features, num_context):
+    def __init__(self, dataset_path, num_speakers, num_features, num_context):
         DatasetBase.__init__(self, num_features, num_context)
         self.dataset_path = dataset_path
 
         #self.read_vctk_dataset(num_speakers=3)
-        self.read_and_cache_vctk_dataset(num_speakers=1)
+        #self.read_and_cache_vctk_dataset(dataset_path, num_speakers)
+        self.load_pickle_dataset('test')
+
+        print(self._labels)
 
 
     def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
@@ -130,11 +133,16 @@ class VCTKDataset(DatasetBase):
 
 def test_dataset():
 
-    dataset_path = '/Users/adamzvada/Desktop/VCTK-Corpus'
+    dataset_path = '/Users/adamzvada/Documents/School/BP/VCTK-Corpus'
 
-    vctk_dataset = VCTKDataset(dataset_path, 13, 4)
+    vctk_dataset = VCTKDataset(dataset_path=dataset_path, num_speakers=1, num_features=13, num_context=4)
 
+    #vctk_dataset.save_pickle_dataset('test')
     train_input, sparse_targets, train_length = vctk_dataset.next_batch(8)
+
+    print(train_input)
+    print(sparse_targets)
+    print(train_length)
 
 if __name__ == "__main__":
 
