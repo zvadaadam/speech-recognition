@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from tqdm import tqdm
+from tqdm import trange
 from speechrecognition.dataset.dataset_base import DatasetBase
 from speechrecognition.utils import audio_utils, text_utils
 
@@ -28,7 +28,8 @@ class DigitDataset(DatasetBase):
         self._audios = []
         self._labels = []
 
-        for i in tqdm(range(10)):
+        t_digits = trange(10, desc='Preprocessing Digit Dataset')
+        for i in t_digits:
             dir = os.path.join(dataset_path, str(i))
 
             filenames = os.listdir(dir)
@@ -36,6 +37,8 @@ class DigitDataset(DatasetBase):
             for filename in filenames:
                 if 'wav' in filename:
                     wav_path = os.path.join(dir, filename)
+
+                    t_digits.set_postfix(file=f'{wav_path}')
 
                     audio_features = audio_utils.audiofile_to_input_vector(wav_path, 13, 4)
 

@@ -76,7 +76,6 @@ class SpeechTrainer(BaseTrain):
         return inputs
 
 
-
     def decode_transcript(self, decode_sparse):
 
         decoded_str = text_utils.index_to_text(decode_sparse[1])
