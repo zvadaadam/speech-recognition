@@ -1,5 +1,4 @@
 import tensorflow as tf
-from tqdm import tqdm
 
 class BaseTrain(object):
 
@@ -9,11 +8,19 @@ class BaseTrain(object):
         self.dataset = dataset
         self.config = config
 
+    def train(self):
+
+        inputs = self.init_dataset()
+
+        self.model.build_model(inputs)
+
         self.init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.session.run(self.init)
 
-    def train(self):
-        for cur_epoch in tqdm(range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1)):
+        for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1):
+
+            print('TRAINING')
+
             # run epoch training
             self.train_epoch()
             # increase epoche counter
@@ -23,4 +30,7 @@ class BaseTrain(object):
         raise NotImplementedError
 
     def train_step(self):
+        raise NotImplementedError
+
+    def init_dataset(self):
         raise NotImplementedError

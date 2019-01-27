@@ -22,5 +22,5 @@ hyperparameter:
     dropout_hidden: 1
 path:
     tensorboard_logs: ./tensorboard
-    train_directory:  /Users/adamzvada/Desktop/VCTK-Corpus
+    train_directory:  /Users/adamzvada/Documents/School/BP/VCTK-Corpus
     trained_model:  ./trained_models/vctk

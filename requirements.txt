@@ -5,3 +5,4 @@ PyYAML
 tqdm
 librosa
 scikit-learn
+click

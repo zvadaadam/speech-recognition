@@ -39,6 +39,25 @@ class DatasetBase(object):
     def num_examples(self):
         return self._num_examples
 
+    def train_dataset(self):
+
+        if not isinstance(self._labels, np.ndarray):
+            raise Exception('Labels needs to be of type numpy arrays...')
+        if not isinstance(self._audios, np.ndarray):
+            raise Exception('Audios needs to be of type numpy arrays...')
+
+        sparse_targets = text_utils.sparse_tuple_from(self._labels)
+
+        # pad audio batch
+        train_input, train_length = audio_utils.pad_sequences(self._audios)
+
+        return train_input, sparse_targets, train_length
+
+
+    def test_dataset(self):
+        # TODO: come up with test_dataset
+        pass
+
     def next_batch(self, batch_size):
         """" Returns from Datset batch of audios for training/testing of batch_size """
 
