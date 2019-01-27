@@ -1,5 +1,6 @@
 import os
-from tqdm import trange, tqdm
+import numpy as np
+from tqdm import tqdm
 from speechrecognition.dataset.dataset_base import DatasetBase
 from speechrecognition.utils import audio_utils, text_utils
 
@@ -112,10 +113,9 @@ class VCTKDataset(DatasetBase):
             self._label_filenames = self._label_filenames + label_paths
 
 
-        self._num_examples = len(self._audio_filenames)
-
         self._audios = []
         self._labels = []
+        self._num_examples = len(self._audio_filenames)
 
         t_files = tqdm(zip(self._audio_filenames, self._label_filenames), total=self._num_examples, desc='Preprocessing VCTK Dataset')
         for audio_filename, label_filename in t_files:
@@ -130,6 +130,10 @@ class VCTKDataset(DatasetBase):
 
             self._audios.append(audio_features)
             self._labels.append(text_target)
+
+        self._audios = np.asarray(self._audios)
+        self._labels = np.asarray(self._labels)
+        self._num_examples = len(self._audios)
 
 
 
