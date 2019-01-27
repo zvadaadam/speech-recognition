@@ -4,13 +4,15 @@ Speech recognition implemented by using __Tensorflow__ for deep learning.
 We are using __recurrent neural network__ with __LSTM__ nodes and in order to deal with sequencing problem we apply __CTC__(Connectionist Temporal Classification).
 
 __MI-PYT TODO__:
-- [ ] Code Refactor
+- [x] Code Refactor
+- [x] (TF dataset pipepline - GPU training speed up)
 - [ ] Improved sound preprocessing and feature extraction
 - [ ] Training model based on Attention Mechanism
 - [ ] Training model based on Neural Turing Machine
 - [ ] Automated generation of datasets from audiobooks
 - [ ] Documentation
 - [ ] Tests
+
 
 
 ## Training data
