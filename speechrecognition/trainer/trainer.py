@@ -1,5 +1,5 @@
 import tensorflow as tf
-from tqdm import tqdm
+from tqdm import trange
 from speechrecognition.base.base_train import BaseTrain
 from speechrecognition.utils import text_utils
 
@@ -12,16 +12,19 @@ class SpeechTrainer(BaseTrain):
     def train_epoch(self):
         num_iterations = self.config.num_iterations()
 
-        losses = []
-        errors = []
+        mean_loss = 0
+        mean_error = 0
         for i in range(num_iterations):
             loss, decoded, error = self.train_step()
-            losses.append(loss)
-            errors.append(error)
+            mean_loss += loss
+            mean_error += error
 
-        # from sparse taking just values to decode
+        mean_loss /= num_iterations
+        mean_error /= num_iterations
+
         decoded_str = self.decode_transcript(decoded)
-        print(f'Epoch#{i}: {decoded_str}')
+
+        return decoded_str, mean_loss, mean_error
 
     def train_step(self):
 
@@ -35,7 +38,7 @@ class SpeechTrainer(BaseTrain):
 
     def prepare_dataset(self):
 
-        # TODO: add test_dataset
+        # TODO: add the test_dataset!
         train_x, train_sparse_y, train_length = self.dataset.dataset_engine.train_dataset()
 
         self.model.init_placeholders(self.config.feature_size())
@@ -47,6 +50,7 @@ class SpeechTrainer(BaseTrain):
         )
         train_dataset = train_dataset.batch(self.config.batch_size())
         train_dataset = train_dataset.repeat()
+        # TODO: check if shuffle works
         train_dataset = train_dataset.shuffle(buffer_size=100)
 
         iterator = tf.data.Iterator.from_structure(output_types=train_dataset.output_types,

@@ -1,4 +1,5 @@
-model_name: multilayer_lstm_ctc
+model_info:
+    name: multilayer_lstm_ctc
 dataset:
     name: digits
     label_type: numbers

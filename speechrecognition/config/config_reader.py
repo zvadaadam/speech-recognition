@@ -15,7 +15,7 @@ class ConfigReader(object): #, metaclass=Singleton):
 
         with open(config_path, 'r') as f:
             config = yaml.load(f)
-            self.model_name = config['model_name']
+            self.model_info = config['model_info']
             self.dataset = config['dataset']
             self.features = config['feature']
             self.hyperparameters = config['hyperparameter']
@@ -24,7 +24,7 @@ class ConfigReader(object): #, metaclass=Singleton):
     # -----HEADER-----
 
     def model_name(self):
-        return self.model_name
+        return self.model_info['name']
 
     # -----DATASET-----
 

@@ -1,4 +1,6 @@
 import tensorflow as tf
+from tqdm import tqdm
+from tqdm import trange
 
 class BaseTrain(object):
 
@@ -17,10 +19,20 @@ class BaseTrain(object):
         self.init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.session.run(self.init)
 
-        for cur_epoch in range(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1):
-
+        # tqdm progress bar looping through all epoches
+        t_epoches = trange(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1,
+                           desc=f'Training {self.config.model_name()}')
+        for cur_epoch in t_epoches:
             # run epoch training
-            self.train_epoch()
+            decoded, mean_loss, mean_error = self.train_epoch()
+
+            # Log the loss in the tqdm progress bar
+            t_epoches.set_postfix(
+                decoded=f'{decoded}',
+                epoch_mean_loss='{:05.3f}'.format(mean_loss),
+                epoch_mean_error='{:05.3f}'.format(mean_error)
+            )
+
             # increase epoche counter
             self.session.run(self.model.increment_cur_epoch_tensor)
 
