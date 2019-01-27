@@ -1,26 +1,28 @@
-model_name: multilayer_lstm_ctc
-corpus:
+model_info:
+    name: multilayer_lstm_ctc
+dataset:
     name: VCTK
     label_type: text
     lang: ENG
+    num_speakers: 2
+    dataset_path: /Users/adamzvada/Documents/School/BP/VCTK-Corpus
 feature:
     name: mfcc
+    feature_size: 13
     num_context: 4
-    num_features: 13
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
     num_layers: 3
     batch_size: 64
     num_epoches: 100
+    num_iterations: 10
     optimizer: Adam
     learning_rate: 0.9
     weight_init: 0.1
     clip_grad: 5.0
     clip_activation: 50
-    dropout_input: 0.8
-    dropout_hidden: 1
-path:
-    tensorboard_logs: ./tensorboard
-    train_directory:  /Users/adamzvada/Documents/School/BP/VCTK-Corpus
-    trained_model:  ./trained_models/vctk
+    dropout_prob: 1
+model:
+    tensorboard_path: ./tensorboard
+    model_path:  ./trained_models/vctk

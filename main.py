@@ -34,7 +34,9 @@ def main(model, config_path):
 if __name__ == "__main__":
 
 
-    main(model=None, config_path='/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc.yml')
+    #main(model=None, config_path='/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc.yml')
+    main(model=None, config_path='/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc_VCTK.yml')
+
 
     # parser = ArgumentParser()
     #

@@ -39,6 +39,10 @@ class DatasetBase(object):
     def num_examples(self):
         return self._num_examples
 
+    # TODO: override this method
+    def read_dataset(self):
+        raise NotImplemented
+
     def train_dataset(self):
 
         if not isinstance(self._labels, np.ndarray):

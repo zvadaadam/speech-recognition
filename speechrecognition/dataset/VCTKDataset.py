@@ -1,6 +1,5 @@
 import os
-from tqdm import tqdm
-
+from tqdm import trange, tqdm
 from speechrecognition.dataset.dataset_base import DatasetBase
 from speechrecognition.utils import audio_utils, text_utils
 
@@ -16,13 +15,13 @@ class VCTKDataset(DatasetBase):
 
     def __init__(self, dataset_path, num_speakers, num_features, num_context):
         DatasetBase.__init__(self, num_features, num_context)
+
         self.dataset_path = dataset_path
 
-        #self.read_vctk_dataset(num_speakers=3)
-        #self.read_and_cache_vctk_dataset(dataset_path, num_speakers)
-        self.load_pickle_dataset('test')
+        self.read_and_cache_vctk_dataset(dataset_path, num_speakers)
 
-        print(self._labels)
+        #self.read_vctk_dataset(num_speakers=3)
+        #self.load_pickle_dataset('test')
 
 
     def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
@@ -93,7 +92,6 @@ class VCTKDataset(DatasetBase):
             print('All speakers')
 
         for speaker_dir in speakers_dirs:
-
             # get full paths for speakers
             speaker_audio_path = os.path.join(audio_dataset_path, speaker_dir)
             speaker_label_path = os.path.join(label_dataset_path, speaker_dir)
@@ -119,11 +117,15 @@ class VCTKDataset(DatasetBase):
         self._audios = []
         self._labels = []
 
-        print('Preprocessing anf Feature extraction...')
+        t_files = tqdm(zip(self._audio_filenames, self._label_filenames), total=self._num_examples, desc='Preprocessing VCTK Dataset')
+        for audio_filename, label_filename in t_files:
 
-        for audio_filename, label_filename in tqdm(zip(self._audio_filenames, self._label_filenames), total=self._num_examples):
+            # Progress bar info
+            t_audio_file = '/'.join(audio_filename.split('/')[-4:])
+            t_label_file = '/'.join(label_filename.split('/')[-4:])
+            t_files.set_postfix(audio_file=f'{t_audio_file}', label_file=f'{t_label_file }')
+
             audio_features = audio_utils.audiofile_to_input_vector(audio_filename, self.num_features, self.num_context)
-
             text_target = text_utils.get_refactored_transcript(label_filename, is_filename=True, is_digit=False)
 
             self._audios.append(audio_features)

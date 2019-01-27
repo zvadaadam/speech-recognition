@@ -6,12 +6,6 @@ from speechrecognition.utils import audio_utils, text_utils
 
 
 class DigitDataset(DatasetBase):
-    """" VCTKDataset process data from VCTK Corpus
-    Args:
-
-
-    """
-
 
     def __init__(self, dataset_path, num_features, num_context):
         DatasetBase.__init__(self, num_features, num_context)

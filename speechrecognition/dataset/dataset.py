@@ -16,10 +16,12 @@ class Dataset(object):
         # TODO: get dataset names from static config
         if name == 'digits':
             self.dataset_engine = DigitDataset(
-                self.config.dataset_path(), self.config.feature_size(), self.config.num_context())
+                dataset_path=self.config.dataset_path(),
+                num_features=self.config.feature_size(), num_context=self.config.num_context())
         elif name == 'VCTK':
             self.dataset_engine = VCTKDataset(
-                self.config.dataset_path(), self.config.feature_size(), self.config.num_context()
+                dataset_path=self.config.dataset_path(), num_speakers=self.config.num_speakers(),
+                num_features=self.config.feature_size(), num_context=self.config.num_context()
             )
         else:
             # TODO: Create my own exepction

@@ -37,6 +37,9 @@ class ConfigReader(object): #, metaclass=Singleton):
     def dataset_label_type(self):
         return self.dataset['label_type']
 
+    def num_speakers(self):
+        return self.dataset['num_speakers']
+
     # -----FEATURES-----
 
     def feature_size(self):
