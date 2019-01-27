@@ -33,21 +33,17 @@ class RNNModel(BaseModel):
     def label_error(self):
         self.label_error
 
-    def build_model(self, inputs):
+    def build_model(self, model_inputs):
 
-        input = inputs['input']
-        sparse_label = inputs['sparse_label']
-        seq_length = inputs['seq_length']
-
-        feature_size = self.config.feature_size()
-
-        self.init_placeholders(feature_size)
+        input = model_inputs['input']
+        sparse_label = model_inputs['sparse_label']
+        seq_length = model_inputs['seq_length']
 
         num_layers = self.config.num_layers()
         num_hidden = self.config.num_hidden()
         num_classes = self.config.num_classes()
 
-        rnn_output = self.build_rnn_layer(num_layers, num_hidden, input, seq_length) #, self.dropout_placeholder)
+        rnn_output = self.build_rnn_layer(num_layers, num_hidden, input, seq_length, self.dropout_placeholder)
 
         logistic_output = self.logistic_layer(rnn_output, input, num_hidden, num_classes)
 
@@ -72,18 +68,18 @@ class RNNModel(BaseModel):
         self.input_seq_len_placeholder = tf.placeholder(tf.int64, shape=[None], name="sequence_length")
 
         # dropout probability
-        #self.dropout_placeholder = tf.placeholder(tf.float32)
+        self.dropout_placeholder = tf.placeholder(tf.float32)
 
 
 
-    def build_rnn_layer(self, num_layers, num_hidden, input_placeholder, input_seq_len_placeholder):
+    def build_rnn_layer(self, num_layers, num_hidden, input_placeholder, input_seq_len_placeholder, dropout_placeholder):
 
         cells = []
         for i in range(num_layers):
             # LSTM Layer
             cell = tf.contrib.rnn.LSTMCell(num_hidden, state_is_tuple=True)
             # Add Dropout
-            #cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=dropout_placeholder)
+            cell = tf.contrib.rnn.DropoutWrapper(cell, output_keep_prob=dropout_placeholder)
 
             cells.append(cell)
         # stack all RNNs
