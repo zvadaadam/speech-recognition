@@ -6,7 +6,10 @@ We are using __recurrent neural network__ with __LSTM__ nodes and in order to de
 __MI-PYT TODO__:
 - [x] Code Refactor
 - [x] (TF dataset pipepline - GPU training speed up)
+- [ ] (Better Tensorboard monitoring)
+- [ ] (Better Speech Evaluation)
 - [ ] Improved sound preprocessing and feature extraction
+- [x] (Training model based with bidirectional RNNs)
 - [ ] Training model based on Attention Mechanism
 - [ ] Training model based on Neural Turing Machine
 - [ ] Automated generation of datasets from audiobooks

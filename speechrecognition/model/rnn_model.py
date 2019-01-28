@@ -90,6 +90,10 @@ class RNNModel(BaseModel):
 
         return outputs
 
+    def dense_layer(self, stack_output, num_classes):
+        # TODO: simplification of logistic_layer
+        return tf.layers.dense(stack_output, num_classes)
+
     def logistic_layer(self, stack_output, input_x, num_hidden, num_classes):
 
         # return tf.contrib.layers.fully_connected(stack_output, num_classes, activation_fn=None)

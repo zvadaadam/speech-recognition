@@ -1,11 +1,11 @@
 model_info:
-    name: multilayer_lstm_ctc
+    name: multilayer_blstm_ctc
+    model: BRNN
 dataset:
-    name: VCTK
-    label_type: text
+    name: digits
+    label_type: numbers
     lang: ENG
-    num_speakers: 2
-    dataset_path: /Users/adamzvada/Documents/School/BP/VCTK-Corpus
+    dataset_path: ./audio_numbers
 feature:
     name: mfcc
     feature_size: 13
@@ -13,10 +13,10 @@ feature:
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
     num_hidden: 100
-    num_layers: 3
-    batch_size: 64
-    num_epoches: 100
-    num_iterations: 100
+    num_layers: 2
+    batch_size: 8
+    num_epoches: 150
+    num_iterations: 10
     optimizer: Adam
     learning_rate: 0.9
     weight_init: 0.1
@@ -24,5 +24,5 @@ hyperparameter:
     clip_activation: 50
     dropout_prob: 1
 model:
-    tensorboard_path: ./tensorboard
-    model_path:  ./trained_models/vctk
+    tensorboard_path: ./tensorboard_two_layers_digits
+    model_path:  ./trained_models/digit
