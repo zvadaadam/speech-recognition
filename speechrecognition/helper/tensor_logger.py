@@ -30,8 +30,13 @@ class TensorLogger:
                 for tag, value in summaries_dict.items():
 
                     if tag not in self.summary_ops:
-                        self.summary_placeholders[tag] = tf.placeholder(tf.float32, value.shape, name=tag)
-                        self.summary_ops[tag] = tf.summary.scalar(tag, self.summary_placeholders[tag])
+
+                        if isinstance(value, str):
+                            self.summary_placeholders[tag] = tf.placeholder(tf.string, shape=(None), name=tag)
+                            self.summary_ops[tag] = tf.summary.text(tag, self.summary_placeholders[tag])
+                        else:
+                            self.summary_placeholders[tag] = tf.placeholder(tf.float32, value.shape, name=tag)
+                            self.summary_ops[tag] = tf.summary.scalar(tag, self.summary_placeholders[tag])
 
                     summary_list.append(self.session.run(self.summary_ops[tag], {self.summary_placeholders[tag]: value}))
 

@@ -10,7 +10,7 @@ class SpeechTrainer(BaseTrain):
     def __init__(self, session, model, dataset, config):
         super(SpeechTrainer, self).__init__(session, model, dataset, config)
 
-    def train_epoch(self):
+    def train_epoch(self, cur_epoche):
         num_iterations = self.config.num_iterations()
 
         mean_loss = 0
@@ -21,7 +21,9 @@ class SpeechTrainer(BaseTrain):
             mean_error += error
 
             if i % 10 == 0:
-                self.log_progress(input=(decoded, loss, error), num_iteration=self.config.num_epoches()*i, mode='train')
+                step_num = cur_epoche*num_iterations + i
+                decoded_str = self.decode_transcript(decoded)
+                self.log_progress(input=(decoded_str, loss, error), num_iteration=step_num, mode='train')
 
         mean_loss /= num_iterations
         mean_error /= num_iterations
@@ -58,6 +60,7 @@ class SpeechTrainer(BaseTrain):
     def log_progress(self, input, num_iteration, mode):
 
         summaries_dict = {
+            'text': input[0],
             'loss': input[1],
             'error': input[2],
         }
@@ -68,7 +71,7 @@ class SpeechTrainer(BaseTrain):
 
         # Log the loss in the tqdm progress bar
         t_bar.set_postfix(
-            decoded=f'{train_input[0]}',
+            #decoded=f'{train_input[0]}',
             train_loss='{:05.3f}'.format(train_input[1]),
             train_error='{:05.3f}'.format(train_input[2]),
             test_loss='{:05.3f}'.format(test_input[1]),

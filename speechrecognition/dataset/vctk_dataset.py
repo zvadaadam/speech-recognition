@@ -62,6 +62,8 @@ class VCTKDataset(DatasetBase):
         self._test_audios = test_x
         self._test_labels = test_y
 
+        print(f'Divided dataset to {len(self._train_audios)} of training data and {len(self._test_audios)} of testing data.')
+
 
     def get_dataset_filenames(self, dataset_path=None, num_speakers=None):
         """" Retrives filenames from VCTK structues corpus and stores them in VCTKDataset object

@@ -1,5 +1,5 @@
 from speechrecognition.dataset.digit_dataset import DigitDataset
-from speechrecognition.dataset.VCTKDataset import VCTKDataset
+from speechrecognition.dataset.vctk_dataset import VCTKDataset
 
 class Dataset(object):
 

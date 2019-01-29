@@ -36,9 +36,10 @@ class BaseTrain(object):
         for cur_epoch in t_epoches:
 
             # run epoch training
-            train_output = self.train_epoch()
+            train_output = self.train_epoch(cur_epoch)
             # run model on test set
             test_output = self.test_step()
+
 
             self.log_progress(train_output, num_iteration=cur_epoch * self.config.num_iterations(), mode='train')
             self.log_progress(test_output, num_iteration=cur_epoch * self.config.num_iterations(), mode='test')
@@ -48,7 +49,7 @@ class BaseTrain(object):
             # increase epoche counter
             self.session.run(self.model.increment_cur_epoch_tensor)
 
-    def train_epoch(self):
+    def train_epoch(self, cur_epoche):
         raise NotImplementedError
 
     def train_step(self):
