@@ -23,8 +23,8 @@ def main(model, config_path):
 
     session = tf.Session()
 
-    #model = RNNModel(config)
-    model = BRNNModel(config)
+    model = RNNModel(config)
+    #model = BRNNModel(config)
 
     trainer = SpeechTrainer(session, model, dataset, config)
 

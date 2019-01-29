@@ -23,5 +23,5 @@ hyperparameter:
     clip_activation: 50
     dropout_prob: 1
 model:
-    tensorboard_path: ./tensorboard_two_layers_digits
+    tensorboard_path: ./tensorboard_log/digits
     model_path:  ./trained_models/digit

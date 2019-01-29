@@ -169,3 +169,5 @@ tensorboard_digits/events.out.tfevents.1525861740.Adam-MacBook-Pro-3.local
 .idea/markdown-navigator.xml
 .idea/markdown-navigator/
 .idea/
+
+/tensorboard_log

@@ -15,7 +15,7 @@ class SpeechTrainer(BaseTrain):
         mean_loss = 0
         mean_error = 0
         for i in range(num_iterations):
-            loss, decoded, error = self.train_step()
+            loss, decoded, error= self.train_step()
             mean_loss += loss
             mean_error += error
 

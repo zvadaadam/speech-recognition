@@ -77,7 +77,7 @@ class ConfigReader(object): #, metaclass=Singleton):
     # -----MODEL-----
 
     def get_tensorboard_logs_path(self):
-        return self.model['tensorboard_logs']
+        return self.model['tensorboard_path']
 
     def get_trained_model_path(self):
         return self.model['model_path']

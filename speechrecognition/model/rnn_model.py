@@ -43,17 +43,20 @@ class RNNModel(BaseModel):
         num_hidden = self.config.num_hidden()
         num_classes = self.config.num_classes()
 
-        rnn_output = self.build_rnn_layer(num_layers, num_hidden, input, seq_length, self.dropout_placeholder)
+        with tf.variable_scope('model'):
+            rnn_output = self.build_rnn_layer(num_layers, num_hidden, input, seq_length, self.dropout_placeholder)
 
-        logistic_output = self.logistic_layer(rnn_output, input, num_hidden, num_classes)
+            logistic_output = self.logistic_layer(rnn_output, input, num_hidden, num_classes)
 
-        self.loss = self.ctc_loss_function(logistic_output, sparse_label, seq_length)
+        with tf.variable_scope('ctc_loss'):
+            self.loss = self.ctc_loss_function(logistic_output, sparse_label, seq_length)
 
-        self.optimizer = self.optimizer_method(self.loss)
+            self.optimizer = self.optimizer_method(self.loss)
 
-        self.decoder = self.ctc_decoder(logistic_output, seq_length)
+        with tf.variable_scope('decoder'):
+            self.decoder = self.ctc_decoder(logistic_output, seq_length)
 
-        self.label_error = self.label_error_rate(self.decoder, sparse_label)
+            self.label_error, self.seq_error = self.label_error_rate(self.decoder, sparse_label, seq_length)
 
 
     def init_placeholders(self, feature_size):
@@ -141,6 +144,16 @@ class RNNModel(BaseModel):
 
         return decoded[0]
 
-    def label_error_rate(self, decoded, sparse_label):
+    def label_error_rate(self, decoded, sparse_label, seq_length):
 
-        return tf.reduce_mean(tf.edit_distance(tf.cast(decoded, tf.int32), tf.cast(sparse_label, tf.int32)))
+        label_errors = tf.edit_distance(tf.cast(decoded, tf.int32), tf.cast(sparse_label, tf.int32))
+
+        total_label_error = tf.reduce_mean(label_errors)
+        seq_errors = tf.count_nonzero(label_errors, axis=0)
+        total_labels = tf.reduce_sum(seq_length)
+
+        label_error = tf.truediv(total_label_error, tf.cast(total_labels, tf.float32), name='label_error')
+        sequence_error = tf.truediv(tf.cast(seq_errors, tf.int32), tf.shape(seq_length)[0], name='sequence_error')
+
+
+        return label_error, sequence_error
