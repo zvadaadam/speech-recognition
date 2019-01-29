@@ -13,10 +13,11 @@ class BaseTrain(object):
         self.config = config
 
         self.iterator = TensorIterator(dataset, model, session, config)
+        self.logger = TensorLogger(log_path=self.config.get_tensorboard_logs_path(), session=self.session)
+
 
     def train(self):
 
-        #model_train_inputs = self.prepare_dataset()
         model_train_inputs, train_handle = self.iterator.create_dataset_iterator(mode='train')
         _, test_handle = self.iterator.create_dataset_iterator(mode='test')
 
@@ -28,28 +29,21 @@ class BaseTrain(object):
         self.init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.session.run(self.init)
 
-        logger = TensorLogger(log_path=self.config.get_tensorboard_logs_path(), session=self.session)
 
         # tqdm progress bar looping through all epoches
         t_epoches = trange(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1,
                            desc=f'Training {self.config.model_name()}')
         for cur_epoch in t_epoches:
+
             # run epoch training
-            decoded, mean_loss, mean_error = self.train_epoch()
+            train_output = self.train_epoch()
+            # run model on test set
+            test_output = self.test_step()
 
-            # Log the loss in the tqdm progress bar
-            t_epoches.set_postfix(
-                decoded=f'{decoded}',
-                epoch_mean_loss='{:05.3f}'.format(mean_loss),
-                epoch_mean_error='{:05.3f}'.format(mean_error)
-            )
+            self.log_progress(train_output, num_iteration=cur_epoch * self.config.num_iterations(), mode='train')
+            self.log_progress(test_output, num_iteration=cur_epoch * self.config.num_iterations(), mode='test')
 
-            # log scalars to tensorboard
-            summaries_dict = {
-                'mean_loss': mean_loss,
-                'mean_error': mean_error,
-            }
-            logger.log_scalars(cur_epoch, summaries_dict=summaries_dict)
+            self.update_progress_bar(t_epoches, train_output, test_output)
 
             # increase epoche counter
             self.session.run(self.model.increment_cur_epoch_tensor)
@@ -60,5 +54,11 @@ class BaseTrain(object):
     def train_step(self):
         raise NotImplementedError
 
-    def prepare_dataset(self):
+    def test_step(self):
+        raise NotImplementedError
+
+    def log_progress(self, input, num_iteration, mode):
+        raise NotImplementedError
+
+    def update_progress_bar(self, t_bar, input):
         raise NotImplementedError
