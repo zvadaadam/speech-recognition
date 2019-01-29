@@ -1,7 +1,4 @@
-import datetime
-import tensorflow as tf
-from tqdm import trange
-from speechrecognition.base.base_train import BaseTrain
+from speechrecognition.trainer.base_train import BaseTrain
 from speechrecognition.utils import text_utils
 
 
@@ -40,7 +37,6 @@ class SpeechTrainer(BaseTrain):
             self.model.dropout_placeholder: self.config.dropout_prob(),
             self.iterator.handle_placeholder: self.train_handle
         })
-
 
         return decoded, loss, error
 

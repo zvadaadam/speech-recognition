@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
 from tqdm import trange
-from speechrecognition.helper.tensor_logger import TensorLogger
+from speechrecognition.utils.tensor_logger import TensorLogger
 from speechrecognition.trainer.tensor_iterator import TensorIterator
 
 class BaseTrain(object):

@@ -1,5 +1,5 @@
 import tensorflow as tf
-from speechrecognition.base.base_model import BaseModel
+from speechrecognition.model.base_model import BaseModel
 from speechrecognition.config.config_reader import ConfigReader
 
 class RNNModel(BaseModel):
