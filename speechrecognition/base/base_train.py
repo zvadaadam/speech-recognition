@@ -2,6 +2,7 @@ import os
 import tensorflow as tf
 from tqdm import trange
 from speechrecognition.helper.tensor_logger import TensorLogger
+from speechrecognition.trainer.tensor_iterator import TensorIterator
 
 class BaseTrain(object):
 
@@ -11,9 +12,16 @@ class BaseTrain(object):
         self.dataset = dataset
         self.config = config
 
+        self.iterator = TensorIterator(dataset, model, session, config)
+
     def train(self):
 
-        model_train_inputs = self.prepare_dataset()
+        #model_train_inputs = self.prepare_dataset()
+        model_train_inputs, train_handle = self.iterator.create_dataset_iterator(mode='train')
+        _, test_handle = self.iterator.create_dataset_iterator(mode='test')
+
+        self.train_handle = train_handle
+        self.test_handle = test_handle
 
         self.model.build_model(model_train_inputs)
 

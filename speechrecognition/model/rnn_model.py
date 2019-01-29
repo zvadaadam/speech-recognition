@@ -9,6 +9,9 @@ class RNNModel(BaseModel):
 
         self.config = config
 
+        # TODO: move to base_model
+        self.init_placeholders(self.config.feature_size())
+
     def x(self):
         self.input_placeholder
 

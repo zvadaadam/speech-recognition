@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 import pickle
 from tqdm import tqdm
 import random
