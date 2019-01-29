@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from tqdm import tqdm
+from sklearn.model_selection import train_test_split
 from speechrecognition.dataset.dataset_base import DatasetBase
 from speechrecognition.utils import audio_utils, text_utils
 
@@ -19,13 +20,50 @@ class VCTKDataset(DatasetBase):
 
         self.dataset_path = dataset_path
 
-        self.read_and_cache_vctk_dataset(dataset_path, num_speakers)
+        self._train_audios = []
+        self._train_labels = []
+        self._test_audios = []
+        self._test_labels = []
 
-        #self.read_vctk_dataset(num_speakers=3)
-        #self.load_pickle_dataset('test')
+        self.read_dataset(dataset_path, num_speakers)
+
+    def read_dataset(self, dataset_path=None, num_speakers=None):
+
+        audio_filenames, label_filenames = self.get_dataset_filenames(dataset_path, num_speakers)
+
+        audios = []
+        labels = []
+        num_examples = len(audio_filenames)
+
+        t_files = tqdm(zip(audio_filenames, label_filenames), total=num_examples, desc='Preprocessing VCTK Dataset')
+        for audio_filename, label_filename in t_files:
+
+            # Progress bar info
+            t_audio_file = '/'.join(audio_filename.split('/')[-4:])
+            t_label_file = '/'.join(label_filename.split('/')[-4:])
+            t_files.set_postfix(audio_file=f'{t_audio_file}', label_file=f'{t_label_file }')
+
+            audio_features = audio_utils.audiofile_to_input_vector(audio_filename, self.num_features, self.num_context)
+            text_target = text_utils.get_refactored_transcript(label_filename, is_filename=True, is_digit=False)
+
+            audios.append(audio_features)
+            labels.append(text_target)
+
+        audios = np.asarray(audios)
+        labels = np.asarray(labels)
+
+        # preshuffle dataset (the main shuffle will be performed in tf.dataset)
+        self.shuffle(audios, labels, seed=42)
+
+        # split dataset to train and test
+        train_x, test_x, train_y, test_y = train_test_split(audios, labels, test_size=0.3, random_state=42)
+        self._train_audios = train_x
+        self._train_labels = train_y
+        self._test_audios = test_x
+        self._test_labels = test_y
 
 
-    def read_vctk_dataset(self, dataset_path=None, num_speakers=None):
+    def get_dataset_filenames(self, dataset_path=None, num_speakers=None):
         """" Retrives filenames from VCTK structues corpus and stores them in VCTKDataset object
         Args:
             dataset_path (string) - given path to home directory of dataset
@@ -48,49 +86,8 @@ class VCTKDataset(DatasetBase):
         else:
             print('All speakers')
 
-        for speaker_dir in tqdm(speakers_dirs, total=len(speakers_dirs)):
-
-            # get full paths for speakers
-            speaker_audio_path = os.path.join(audio_dataset_path, speaker_dir)
-            speaker_label_path = os.path.join(label_dataset_path, speaker_dir)
-
-            # ignore inconsistency in data or anything that is not directory
-            if not os.path.isdir(speaker_audio_path) or not os.path.isdir(speaker_label_path):
-                continue
-
-            # Getting full paths to all audios and labels of the speaker
-            audio_paths = [os.path.join(speaker_audio_path, speaker_filename) for speaker_filename in os.listdir(speaker_audio_path)]
-            label_paths = [os.path.join(speaker_label_path, speaker_filename) for speaker_filename in os.listdir(speaker_label_path)]
-
-            audio_paths.sort()
-            label_paths.sort()
-
-            # concatenate speaker filenames
-            self._audio_filenames = self._audio_filenames + audio_paths
-            self._label_filenames = self._label_filenames + label_paths
-
-        print()
-
-        self._num_examples = len(self._audio_filenames)
-
-    def read_and_cache_vctk_dataset(self, dataset_path=None, num_speakers=None):
-
-        if dataset_path is not None:
-            self.dataset_path = dataset_path
-
-        print("Retriving all filenames for VCTK training dataset from path", self.dataset_path)
-
-        audio_dataset_path = os.path.join(self.dataset_path, 'wav48')
-        label_dataset_path = os.path.join(self.dataset_path, 'txt')
-
-        # gets list of directories for diffrent speakers
-        speakers_dirs = os.listdir(audio_dataset_path)
-
-        if num_speakers is not None:
-            speakers_dirs = speakers_dirs[0:num_speakers]
-            print('Number of speakers: ', num_speakers)
-        else:
-            print('All speakers')
+        audio_filenames = []
+        label_filenames = []
 
         for speaker_dir in speakers_dirs:
             # get full paths for speakers
@@ -102,39 +99,19 @@ class VCTKDataset(DatasetBase):
                 continue
 
             # Getting full paths to all audios and labels of the speaker
-            audio_paths = [os.path.join(speaker_audio_path, speaker_filename) for speaker_filename in os.listdir(speaker_audio_path)]
-            label_paths = [os.path.join(speaker_label_path, speaker_filename) for speaker_filename in os.listdir(speaker_label_path)]
+            audio_paths = [os.path.join(speaker_audio_path, speaker_filename) for speaker_filename in
+                           os.listdir(speaker_audio_path)]
+            label_paths = [os.path.join(speaker_label_path, speaker_filename) for speaker_filename in
+                           os.listdir(speaker_label_path)]
 
             audio_paths.sort()
             label_paths.sort()
 
             # concatenate speaker filenames
-            self._audio_filenames = self._audio_filenames + audio_paths
-            self._label_filenames = self._label_filenames + label_paths
+            audio_filenames = audio_filenames + audio_paths
+            label_filenames = label_filenames + label_paths
 
-
-        self._audios = []
-        self._labels = []
-        self._num_examples = len(self._audio_filenames)
-
-        t_files = tqdm(zip(self._audio_filenames, self._label_filenames), total=self._num_examples, desc='Preprocessing VCTK Dataset')
-        for audio_filename, label_filename in t_files:
-
-            # Progress bar info
-            t_audio_file = '/'.join(audio_filename.split('/')[-4:])
-            t_label_file = '/'.join(label_filename.split('/')[-4:])
-            t_files.set_postfix(audio_file=f'{t_audio_file}', label_file=f'{t_label_file }')
-
-            audio_features = audio_utils.audiofile_to_input_vector(audio_filename, self.num_features, self.num_context)
-            text_target = text_utils.get_refactored_transcript(label_filename, is_filename=True, is_digit=False)
-
-            self._audios.append(audio_features)
-            self._labels.append(text_target)
-
-        self._audios = np.asarray(self._audios)
-        self._labels = np.asarray(self._labels)
-        self._num_examples = len(self._audios)
-
+        return audio_filenames, label_filenames
 
 
 def test_dataset():

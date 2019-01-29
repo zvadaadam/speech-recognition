@@ -1,4 +1,4 @@
-from speechrecognition.dataset.DigitDataset import DigitDataset
+from speechrecognition.dataset.digit_dataset import DigitDataset
 from speechrecognition.dataset.VCTKDataset import VCTKDataset
 
 class Dataset(object):
