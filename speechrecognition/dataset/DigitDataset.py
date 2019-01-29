@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from tqdm import trange
+from sklearn.model_selection import train_test_split
 from speechrecognition.dataset.dataset_base import DatasetBase
 from speechrecognition.utils import audio_utils, text_utils
 
@@ -12,6 +13,11 @@ class DigitDataset(DatasetBase):
 
         self.dataset_path = dataset_path
 
+        self._train_audios = []
+        self._train_labels = []
+        self._test_audios = []
+        self._test_labels = []
+
         self.read_digit_dataset(dataset_path)
 
 
@@ -19,8 +25,8 @@ class DigitDataset(DatasetBase):
 
         print(f'Preparing Digit Dataset from path {dataset_path}')
 
-        self._audios = []
-        self._labels = []
+        audios = []
+        labels = []
 
         t_digits = trange(10, desc='Preprocessing Digit Dataset')
         for i in t_digits:
@@ -38,16 +44,24 @@ class DigitDataset(DatasetBase):
 
                     text_target = text_utils.get_refactored_transcript(i, is_filename=False)
 
-                    self._audios.append(audio_features)
-                    self._labels.append(text_target)
+                    audios.append(audio_features)
+                    labels.append(text_target)
 
 
-        print(f'Loaded {len(self.audios)} digit records.')
+        print(f'Loaded {len(audios)} digit records.')
 
-        self._audios = np.asarray(self._audios)
-        self._labels = np.asarray(self._labels)
-        self._num_examples = len(self._audios)
+        audios = np.asarray(audios)
+        labels = np.asarray(labels)
 
+        # preshuffle dataset (the main shuffle will be performed in tf.dataset)
+        self.shuffle(audios, labels, seed=42)
+
+        # split dataset to train and test
+        train_x, test_x, train_y, test_y = train_test_split(audios, labels, test_size=0.3, random_state=42)
+        self._train_audios = train_x
+        self._train_labels = train_y
+        self._test_audios = test_x
+        self._test_labels = test_y
 
 
 def test_dataset():

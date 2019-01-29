@@ -13,9 +13,9 @@ class BaseTrain(object):
 
     def train(self):
 
-        model_inputs = self.prepare_dataset()
+        model_train_inputs = self.prepare_dataset()
 
-        self.model.build_model(model_inputs)
+        self.model.build_model(model_train_inputs)
 
         self.init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.session.run(self.init)

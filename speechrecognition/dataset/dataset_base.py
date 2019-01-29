@@ -19,51 +19,43 @@ class DatasetBase(object):
         self._epochs_completed = 0
 
 
-    @property
-    def audio_filenames(self):
-        return self._audio_filenames
-
-    @property
-    def label_filenames(self):
-        return self._label_filenames
-
-    @property
-    def audios(self):
-        return self._audios
-
-    @property
-    def labels(self):
-        return self._labels
-
-    @property
-    def num_examples(self):
-        return self._num_examples
-
     # TODO: override this method
     def read_dataset(self):
         raise NotImplemented
 
     def train_dataset(self):
-
-        if not isinstance(self._labels, np.ndarray):
-            raise Exception('Labels needs to be of type numpy arrays...')
-        if not isinstance(self._audios, np.ndarray):
-            raise Exception('Audios needs to be of type numpy arrays...')
-
-        sparse_targets = text_utils.sparse_tuple_from(self._labels)
-
-        # pad audio batch
-        train_input, train_length = audio_utils.pad_sequences(self._audios)
-
-        return train_input, sparse_targets, train_length
-
+        return self.transform_to_speech_targets(self._train_audios, self._train_labels)
 
     def test_dataset(self):
-        # TODO: come up with test_dataset
-        pass
+        return self.transform_to_speech_targets(self._test_audios, self._test_labels)
+
+    def transform_to_speech_targets(self, audios, labels):
+        if not isinstance(labels, np.ndarray):
+            raise Exception('Labels needs to be of type numpy arrays...')
+        if not isinstance(audios, np.ndarray):
+            raise Exception('Audios needs to be of type numpy arrays...')
+
+        y_sparse = text_utils.sparse_tuple_from(labels)
+
+        # pad audio batch
+        x, x_length = audio_utils.pad_sequences(audios)
+
+        return x, y_sparse, x_length
+
+    def shuffle(self, x, y, seed):
+
+        files = list(zip(x, y))
+        random.seed(seed)
+        random.shuffle(files)
+        x, y = zip(*files)
+
+        return x, y
 
     def next_batch(self, batch_size):
-        """" Returns from Datset batch of audios for training/testing of batch_size """
+        """"
+        Deprecated: use tf.data.dataset batching
+        Returns from Datset batch of audios for training/testing of batch_size
+        """
 
         if batch_size > self._num_examples:
             raise ValueError('Batch size cannot be greather then number of examples in dataset')
@@ -103,7 +95,10 @@ class DatasetBase(object):
 
 
     def next_batch_and_preprocess(self, batch_size):
-        """" Returns from Datset batch of audios for training/testing of batch_size """
+        """"
+        Deprecated: use tf.data.dataset batching
+        Returns from Datset batch of audios for training/testing of batch_size
+        """
 
         if batch_size > self._num_examples:
             raise ValueError('Batch size cannot be greather then number of examples in dataset')
