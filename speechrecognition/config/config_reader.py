@@ -1,6 +1,12 @@
 import yaml
-
 from speechrecognition.helper.singleton import Singleton
+
+
+## define custom tag handler
+def join(loader, node):
+    seq = loader.construct_sequence(node)
+    return ''.join([str(i) for i in seq])
+
 
 class ConfigReader(object): #, metaclass=Singleton):
     """" ConfigReader - parse yml config file
@@ -12,6 +18,8 @@ class ConfigReader(object): #, metaclass=Singleton):
     def __init__(self, config_path):
 
         print("Processing CONFIG in filename: ", config_path)
+
+        yaml.add_constructor('!join', join)
 
         with open(config_path, 'r') as f:
             config = yaml.load(f)
@@ -80,4 +88,10 @@ class ConfigReader(object): #, metaclass=Singleton):
         return self.model['tensorboard_path']
 
     def get_trained_model_path(self):
-        return self.model['model_path']
+        return self.model['trained_path']
+
+    def model_description(self):
+        return self.model['model_description']
+
+    def restore_trained_model(self):
+        return self.model['restore_trained_model']

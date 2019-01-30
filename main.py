@@ -28,8 +28,6 @@ def main(model, config_path):
 
     trainer = SpeechTrainer(session, model, dataset, config)
 
-    model.load(session)
-
     trainer.train()
 
 

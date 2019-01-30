@@ -38,6 +38,9 @@ class SpeechTrainer(BaseTrain):
             self.iterator.handle_placeholder: self.train_handle
         })
 
+        # increase global step counter
+        self.session.run(self.model.increment_global_step_tensor)
+
         return decoded, loss, error
 
     def test_step(self):

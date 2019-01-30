@@ -1,7 +1,7 @@
 model_info:
     name: multilayer_lstm_ctc
 dataset:
-    name: digits
+    name: &dataset_name digits
     label_type: numbers
     lang: ENG
     dataset_path: ./audio_numbers
@@ -11,11 +11,11 @@ feature:
     num_context: 4
 hyperparameter:
     num_classes: 28 #ord('z') - ord('a') + 1(space) + 1(blank) + 1
-    num_hidden: 100
-    num_layers: 2
-    batch_size: 16
-    num_epoches: 200
-    num_iterations: 100
+    num_hidden: &num_hidden 100
+    num_layers: &num_layers 2
+    batch_size: &batch_size 16
+    num_epoches: 100
+    num_iterations: 50
     optimizer: Adam
     learning_rate: 0.9
     weight_init: 0.1
@@ -23,5 +23,8 @@ hyperparameter:
     clip_activation: 50
     dropout_prob: 0.5
 model:
+    model_type: &model_type RNN
     tensorboard_path: ./tensorboard_log/digits
-    model_path:  ./trained_models/digit
+    trained_path:  !join [./trained_models/, *dataset_name, /]
+    model_description: !join [*model_type, _, l, *num_layers, _, h, *num_hidden, _, b, *batch_size]
+    restore_trained_model:

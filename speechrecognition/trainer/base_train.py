@@ -29,6 +29,10 @@ class BaseTrain(object):
         self.init = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.session.run(self.init)
 
+        self.model.init_saver(max_to_keep=2)
+
+        # restore latest checkpoint model
+        self.model.load(self.session, self.config.restore_trained_model())
 
         # tqdm progress bar looping through all epoches
         t_epoches = trange(self.model.cur_epoch_tensor.eval(self.session), self.config.num_epoches() + 1, 1,
@@ -48,6 +52,12 @@ class BaseTrain(object):
 
             # increase epoche counter
             self.session.run(self.model.increment_cur_epoch_tensor)
+
+            self.model.save(self.session, write_meta_graph=False)
+
+        # finale save model - creates checkpoint
+        self.model.save(self.session, write_meta_graph=True)
+
 
     def train_epoch(self, cur_epoche):
         raise NotImplementedError
