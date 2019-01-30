@@ -11,8 +11,10 @@ class BaseModel(object):
 
     # save current checkpoint
     def save(self, session, global_step=None, write_meta_graph=True):
-        self.saver.save(session, self.config.get_trained_model_path(),
-                        global_step=global_step or self.global_step_tensor, write_meta_graph=write_meta_graph)
+        save_path = self.config.get_trained_model_path() + self.config.model_description()
+
+        self.saver.save(session, save_path, global_step=global_step or self.global_step_tensor,
+                        write_meta_graph=write_meta_graph)
 
     # load latest checkpoint
     def load(self, sess, model_path=None):

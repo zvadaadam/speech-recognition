@@ -14,7 +14,7 @@ hyperparameter:
     num_hidden: &num_hidden 100
     num_layers: &num_layers 2
     batch_size: &batch_size 16
-    num_epoches: 100
+    num_epoches: 120
     num_iterations: 50
     optimizer: Adam
     learning_rate: 0.9
