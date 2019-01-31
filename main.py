@@ -1,83 +1,37 @@
-import sys
 import click
-import tensorflow as tf
 from speechrecognition.config.config_reader import ConfigReader
-from speechrecognition.dataset.dataset import Dataset
-from speechrecognition.model.rnn_model import RNNModel
-from speechrecognition.model.brnn_model import BRNNModel
-from speechrecognition.trainer.trainer import SpeechTrainer
+from speechrecognition.main_predict import main_predict
+from speechrecognition.main_train import main_train
 
 
+@click.group()
+@click.pass_context
+def speech(ctx):
+    if ctx.invoked_subcommand is None:
+        click.echo('Missing speech subcommand! \n Choose train or predict command.')
+    else:
+        click.echo('Invoking command: %s' % ctx.invoked_subcommand)
 
-# @click.command('speech')
-# @click.option('-m', '--model', type=click.Choice(['RNN']), default=None, show_default=True, help='Choose speech recognition model.')
-# @click.option('-c', '--config', 'config_path', type=click.File('r'), help='Configuration file for model.')
-def main(model, config_path):
-
-    if model != None:
-        print('TODO PREDICTOR')
-
+@speech.command()
+@click.option('-c', '--config', 'config_path', type=click.Path(exists=True), required=True, help='Configuration file for model.')
+def train(config_path):
     config = ConfigReader(config_path)
 
-    dataset = Dataset(config)
+    main_train(config)
 
-    session = tf.Session()
+@speech.command()
+@click.option('-x', '--audio', type=click.Path(), required=True, help='Audio filename for speech prediction.')
+@click.option('-c', '--config', 'config_path', type=click.Path(exists=True), required=True, help='Configuration file for model.')
+def predict(audio, config_path):
+    config = ConfigReader(config_path)
 
-    model = RNNModel(config)
-    #model = BRNNModel(config)
-
-    trainer = SpeechTrainer(session, model, dataset, config)
-
-    trainer.train()
-
-
-if __name__ == "__main__":
+    print(audio)
+    transcripted_text = main_predict(config, audio)
+    print(transcripted_text)
 
 
-    main(model=None, config_path='/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc.yml')
-    #main(model=None, config_path='/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc_VCTK.yml')
+if __name__ == '__main__':
+    speech()
 
 
-    # parser = ArgumentParser()
-    #
-    # parser.add_argument('--train', action="store_true", default=False)
-    # parser.add_argument('--decode', action="store_true", default=False)
-    # parser.add_argument('--digit', action="store_true", default=False)
-    # parser.add_argument('--vctk', action="store_true", default=False)
-    # parser.add_argument('--config', action="store", default='./src/config/lstm_ctc_VCTK.yml')
-    # parser.add_argument('--model', action="store", default='./trained_models/three_speaker_model-147')
-    # parser.add_argument('--decodefile', action="store", default='/Users/adamzvada/Desktop/VCTK-Corpus/wav48/p225/p225_001.wav')
-    # parser.add_argument('--dataset', action="store", default='/Users/adamzvada/Desktop/VCTK-Corpus')
-    #
-    #
-    # args = parser.parse_args()
-    #
-    # is_training = args.train
-    # is_decoding = args.decode
-    # is_digit = args.digit
-    # is_vctk = args.vctk
-    # config_file = args.config
-    # model_file = args.model
-    # input_file = args.decodefile
-    # dataset_file = args.dataset
-    #
-    #
-    # if is_digit == is_vctk:
-    #     sys.exit("Cannot perfrom digits and vctk simultaneously...")
-    #
-    # if is_training == is_decoding:
-    #     sys.exit("Cannot train and decode simultaneously...")
-    #
-    #
-    # if is_training:
-    #    train.main(config_file, dataset_file, is_vctk)
-    #
-    #     # args = sys.argv
-    #     # if len(args) == 2:
-    #     #     train_new.main(config_path=args[1])
-    #     # elif len(args) == 3:
-    #     #     train_new.main(config_path=args[1], dataset_path=args[2])
-    #     # else:
-    #     #     train_new.main()
-    # else:
-    #    decoder.predict(input_file, config_file)
+
