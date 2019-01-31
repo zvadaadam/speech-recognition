@@ -7,8 +7,18 @@ from speechrecognition.utils import audio_utils, text_utils
 
 
 class DigitDataset(DatasetBase):
+    """
+    Dataset engine/parser for Digit dataset extended from the DatasetBase object.
+    Digit dataset from download: https://github.com/Jakobovski/free-spoken-digit-dataset
+    """
 
     def __init__(self, dataset_path, num_features, num_context):
+        """
+        Initializer of DigitDataset object
+        :param str dataset_path: path to digit dataset locally
+        :param int num_features: size of feature vector
+        :param num_context: NOT USED...
+        """
         DatasetBase.__init__(self, num_features, num_context)
 
         self.dataset_path = dataset_path
@@ -22,6 +32,10 @@ class DigitDataset(DatasetBase):
 
 
     def read_digit_dataset(self, dataset_path):
+        """
+        Function fetches all filenames in dataset folder and loads the file to memory and performs speech preprocessing.
+        :param str dataset_path: path to digit dataset locally
+        """
 
         print(f'Preparing Digit Dataset from path {dataset_path}')
 

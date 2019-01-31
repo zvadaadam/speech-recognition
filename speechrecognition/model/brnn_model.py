@@ -2,15 +2,34 @@ import tensorflow as tf
 from speechrecognition.model.rnn_model import RNNModel
 
 class BRNNModel(RNNModel):
+    """
+    BRNNModel extending RNNModel for supporting bidirectional recurrent neural networks (BRNN).
+    """
 
     def __init__(self, config, is_stack=True):
+        """
+        Initializer of BRNNModel object
+
+        :param ConfigReader config: config reader object
+        :param is_stack: flag for wheter to create stacked of unstacked BRNN
+        """
         super(BRNNModel, self).__init__(config)
 
         self.is_stack = is_stack
 
 
     def build_rnn_layer(self, num_layers, num_hidden, input_placeholder, input_seq_len_placeholder, dropout_placeholder):
+        """
+        Method builds bidirectional rnn layer with specified params.
+        Overrides function from RNNModel.
 
+        :param int num_layers: number of layers
+        :param int num_hidden: number of hidden layers
+        :param tf.Placeholder input_placeholder: placeholder for audio input
+        :param tf.Placeholder input_seq_len_placeholder: placeholder for max audio length
+        :param int dropout_placeholder: dropout probablility placeholder
+        :return: output of rnn
+        """
         cells_fw = []
         cells_bw = []
         for i in range(num_layers):

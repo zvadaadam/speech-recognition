@@ -7,8 +7,16 @@ import random
 from speechrecognition.utils import audio_utils, text_utils
 
 class DatasetBase(object):
+    """
+    Base class for datasets operation.
+    """
 
     def __init__(self, num_features, num_context):
+        """
+        Initializer of DatasetBase object
+        :param int num_features: size of feature vector
+        :param num_context: NOT USED...
+        """
         self._audio_filenames = []
         self._label_filenames = []
         self._num_examples = 0
@@ -25,12 +33,30 @@ class DatasetBase(object):
         raise NotImplemented
 
     def train_dataset(self):
+        """
+        Returns the train targets for the model in wanted format.
+
+        :return: tuple of (x, sparse_label, x_length)
+        """
         return self.transform_to_speech_targets(self._train_audios, self._train_labels)
 
     def test_dataset(self):
+        """
+        Returns the train targets for the model in wanted format.
+
+        :return: tuple of (x, sparse_label, x_length)
+        """
         return self.transform_to_speech_targets(self._test_audios, self._test_labels)
 
     def transform_to_speech_targets(self, audios, labels):
+        """
+        Transorms the two inputs to training model acceptable forms.
+        For labels it create sparse matrix and pads the audio sequence to same length.
+
+        :param np.ndarray audios: dataset audios
+        :param np.ndarray labels: labels as transcription of audios
+        :return: tuple of (x, sparse_label, x_length)
+        """
         if not isinstance(labels, np.ndarray):
             raise Exception('Labels needs to be of type numpy arrays...')
         if not isinstance(audios, np.ndarray):
@@ -44,6 +70,14 @@ class DatasetBase(object):
         return x, y_sparse, x_length
 
     def shuffle(self, x, y, seed):
+        """
+        Shuffles the x and y in same order.
+
+        :param x: audio features
+        :param y: sparse labels
+        :param seed: random seed value
+        :return: tuple of shuffled x, y
+        """
 
         files = list(zip(x, y))
         random.seed(seed)
@@ -146,6 +180,10 @@ class DatasetBase(object):
         return train_input, sparse_targets, train_length
 
     def load_pickle_dataset(self, name_dataset):
+        """
+        Loads from pickle file variables for audio and it's label transcription.
+        :param str name_dataset: Path datset
+        """
 
         with open(name_dataset + '_audios', 'rb') as f:
             self._audios = pickle.load(f)
@@ -154,7 +192,10 @@ class DatasetBase(object):
             self._labels = pickle.load(f)
 
     def save_pickle_dataset(self, name_dataset):
-
+        """
+        Save to pickle file variables for audio and it's label transcription.
+        :param str name_dataset: Path datset
+        """
         # sfile = bz2.BZ2File('smallerfile', 'w')
 
         with open(name_dataset + '_audios', 'wb') as f:

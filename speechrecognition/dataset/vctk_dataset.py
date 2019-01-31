@@ -7,15 +7,20 @@ from speechrecognition.utils import audio_utils, text_utils
 
 
 class VCTKDataset(DatasetBase):
-    """" VCTKDataset process data from VCTK Corpus
-    Args:
-        dataset_path
-        num_features
-        num_context
+    """
+    VCTKDataset process data from VCTK Corpus
+    https://homepages.inf.ed.ac.uk/jyamagis/page3/page58/page58.html
     """
 
 
     def __init__(self, dataset_path, num_speakers, num_features, num_context):
+        """
+        Initializer of VCTKDataset object
+        :param str dataset_path: path to digit dataset locally
+        :param int num_features: size of feature vector
+        :param int num_speakers: number of speakers to be retrived
+        :param num_context: NOT USED...
+        """
         DatasetBase.__init__(self, num_features, num_context)
 
         self.dataset_path = dataset_path
@@ -28,6 +33,12 @@ class VCTKDataset(DatasetBase):
         self.read_dataset(dataset_path, num_speakers)
 
     def read_dataset(self, dataset_path=None, num_speakers=None):
+        """
+        Loads VCTK dataset audios and transcripts to memory for the learning model
+        and splits the datata to train/test set.
+        :param str dataset_path: path to digit dataset locally
+        :param int num_speakers: number of speakers to be retrived
+        """
 
         audio_filenames, label_filenames = self.get_dataset_filenames(dataset_path, num_speakers)
 
@@ -66,9 +77,10 @@ class VCTKDataset(DatasetBase):
 
 
     def get_dataset_filenames(self, dataset_path=None, num_speakers=None):
-        """" Retrives filenames from VCTK structues corpus and stores them in VCTKDataset object
-        Args:
-            dataset_path (string) - given path to home directory of dataset
+        """
+        Function fetches all filenames for trainign and labels in VCTK dataset folder.
+        :param str dataset_path: path to digit dataset locally
+        :param int num_speakers: number of speakers to be retrived
         """
 
         if dataset_path is not None:

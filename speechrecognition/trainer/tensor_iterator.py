@@ -1,9 +1,18 @@
 import tensorflow as tf
 
 class TensorIterator(object):
-
-
+    """
+    TensorIterator creates tf.Dataset iterator from given dataset.
+    It speeds up the training with GPU by efficiently preparing the training data.
+    """
     def __init__(self, dataset, model, session, config):
+        """
+        Initializer fro TensorIterator object
+        :param tf.Session session: tensorflow session
+        :param BaseModel model: tensorflow model
+        :param BaseDataset dataset: dataset object
+        :param ConfigReader config: config reader object
+        """
         self.dataset = dataset
         self.model = model
         self.config = config
@@ -15,8 +24,8 @@ class TensorIterator(object):
         """
         Create feedable Tensorflow Iterator from dataset
 
-        :param mode:
-        :return:
+        :param str mode: training mode [test || train]
+        :return: iterator inputs dict for the models inputs placeholders and string handler for switching between test and train set
         """
 
         if mode == 'train':

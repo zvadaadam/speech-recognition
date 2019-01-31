@@ -11,13 +11,11 @@ FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
 def get_refactored_transcript(txt, is_filename=True, is_digit=True):
     """"
-        Fucntion reads text file and refactors its text. It extract unwanted characters(.,?,!,\n, etc.).
-        Converts text to array for characters and map them to indexs.
-        @:param txt_filename
-        @:return array of characters mapped to integers from file text
+    Fucntion reads text file and refactors its text. It extract unwanted characters(.,?,!,\n, etc.).
+    Converts text to array for characters and map them to indexs.
+    :param str txt_filename:
+    :return array of characters mapped to integers from file text
     """
-
-
     if is_filename:
         txt = read_txt(txt)
 
@@ -32,16 +30,30 @@ def get_refactored_transcript(txt, is_filename=True, is_digit=True):
     return chars_to_index(text_by_chars)
 
 def read_txt(filename):
+    """
+    Reades text file
+    :param str filename: file to be read
+    :return: content of textfile
+    """
     with open(filename) as f:
         txt = f.read()
 
     return txt
 
 def chars_to_index(char_text):
+    """
+    Convert chars to asci indexes
+    :param list char_text: array of characters
+    :return: array of ascii indexes
+    """
     return np.asarray([SPACE_INDEX if x == SPACE_TOKEN else ord(x) - FIRST_INDEX for x in char_text])
 
 def simplify_text(text):
-
+    """
+    Deletes unwanted characters
+    :param str text: text to be simplified
+    :return: transformed string text
+    """
     # lower text
     simplified_text = ' '.join(text.strip().lower().split(' '))
 
@@ -55,6 +67,11 @@ def simplify_text(text):
 
 
 def text_to_chars(text):
+    """
+    Convert text to characters
+    :param str text: string text
+    :return: array of characters
+    """
     # replace space(' ') on two spaces
     refactor_text = text.replace(' ', '  ')
 
@@ -67,6 +84,11 @@ def text_to_chars(text):
     return refactor_text
 
 def index_to_text(text_index):
+    """
+    Convert ascii indeces to text
+    :param list text_index: array of ascii indexes
+    :return: text from indexes
+    """
 
     char_text = ''.join([chr(x) for x in np.asarray(text_index) + FIRST_INDEX])
     char_text = char_text.replace(chr(ord('z') + 1), '')
@@ -75,11 +97,11 @@ def index_to_text(text_index):
     return char_text
 
 def sparse_tuple_from(sequences, dtype=np.int32):
-    """Create a sparse representention of x.
-    Args:
-        sequences: a list of lists of type dtype where each element is a sequence
-    Returns:
-        A tuple with (indices, values, shape)
+    """
+    Create a sparse representention of x.
+    :param sequences: list of lists of type dtype where each element is a sequence
+    :param dtype: type
+    :return: sparse format of sequence
     """
     indices = []
     values = []
@@ -97,6 +119,11 @@ def sparse_tuple_from(sequences, dtype=np.int32):
 
 
 def text_number(num):
+    """
+    Mapping number to its word transcript
+    :param itn num: number
+    :return: string representation of number
+    """
     return {
          0 : 'zero',
          1 : 'one',

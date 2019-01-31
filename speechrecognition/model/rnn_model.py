@@ -3,8 +3,16 @@ from speechrecognition.model.base_model import BaseModel
 from speechrecognition.config.config_reader import ConfigReader
 
 class RNNModel(BaseModel):
+    """
+    RNNModel extending BaseModel is based on Recurrent Neural Networks and CTC loss function.
+    """
 
     def __init__(self, config):
+        """
+        Initializer of RNNModel object
+
+        :param ConfigReader config: config reader object
+        """
         super(RNNModel, self).__init__(config)
 
         self.config = config
@@ -13,30 +21,42 @@ class RNNModel(BaseModel):
         self.init_placeholders(self.config.feature_size())
 
     def x(self):
+        """NOT USED"""
         self.input_placeholder
 
     def y(self):
+        """NOT USED"""
         self.label_sparse_placeholder
 
     def seq_length(self):
+        """NOT USED"""
         self.input_seq_len_placeholder
 
     def dropout_prob(self):
+        """NOT USED"""
         self.dropout_placeholder
 
     def loss(self):
+        """NOT USED"""
         self.loss
 
     def optimizer(self):
+        """NOT USED"""
         self.optimizer
 
     def decoder(self):
+        """NOT USED"""
         self.decoder
 
     def label_error(self):
+        """NOT USED"""
         self.label_error
 
     def build_model(self, model_inputs):
+        """
+        Builds Tensorflow computational graph of the network model for RNN and CTC approach.
+        :param dict model_inputs: dictionary of inputs from tf.data.dataset iterator
+        """
 
         input = model_inputs['input']
         sparse_label = model_inputs['sparse_label']
@@ -63,6 +83,11 @@ class RNNModel(BaseModel):
 
 
     def init_placeholders(self, feature_size):
+        """
+        Initialize model network placeholders
+        :param int feature_size: size of feature vector
+        :return:
+        """
 
         # input_x [batch_size, max_timestap, input_size_vector]
         self.input_placeholder = tf.placeholder(tf.float32, shape=[None, None, feature_size], name='input')
@@ -79,7 +104,15 @@ class RNNModel(BaseModel):
 
 
     def build_rnn_layer(self, num_layers, num_hidden, input_placeholder, input_seq_len_placeholder, dropout_placeholder):
-
+        """
+        Method builds RNN layer with specified params.
+        :param int num_layers: number of layers
+        :param int num_hidden: number of hidden layers
+        :param tf.Placeholder input_placeholder: placeholder for audio input
+        :param tf.Placeholder input_seq_len_placeholder: placeholder for max audio length
+        :param int dropout_placeholder: dropout probablility placeholder
+        :return: output of rnn
+        """
         cells = []
         for i in range(num_layers):
             # LSTM Layer
@@ -101,6 +134,14 @@ class RNNModel(BaseModel):
         return tf.layers.dense(stack_output, num_classes)
 
     def logistic_layer(self, stack_output, input_x, num_hidden, num_classes):
+        """
+        Create fully connected layer
+        :param stack_output: previous out layer
+        :param tf.Placeholder input_x: audio input
+        :param int num_hidden: number of hidden cells
+        :param int num_classes: number of output classes
+        :return: output layer
+        """
 
         # return tf.contrib.layers.fully_connected(stack_output, num_classes, activation_fn=None)
 
@@ -130,6 +171,13 @@ class RNNModel(BaseModel):
 
 
     def ctc_loss_function(self, stack_output, sparse_label, seq_length):
+        """
+        Computes the CTC (Connectionist Temporal Classification) Loss.
+        :param stack_output: previous out layer
+        :param tf.sparse_placeholder_label: transcript label as sparse placeholder
+        :param tf.placeholder seq_length: length of audio sequence
+        :return: loss
+        """
 
         with tf.name_scope("ctc_loss"):
             loss = tf.nn.ctc_loss(tf.cast(sparse_label, tf.int32), stack_output, tf.cast(seq_length, tf.int32))
@@ -138,16 +186,34 @@ class RNNModel(BaseModel):
         return loss
 
     def optimizer_method(self, loss):
+        """
+        Optimizer of the network
+        :param loss: loss of network
+        :return: train_step
+        """
 
         return tf.train.AdamOptimizer().minimize(loss)
 
     def ctc_decoder(self, stack_output, seq_length):
+        """
+        Greedty decoding from the logit layer
+        :param stack_output: previous out layer
+        :param tf.placeholder seq_length: length of audio sequence
+        :return: decoded
+        """
 
         decoded, _ = tf.nn.ctc_greedy_decoder(stack_output, tf.cast(seq_length, tf.int32))
 
         return decoded[0]
 
     def label_error_rate(self, decoded, sparse_label, seq_length):
+        """
+        Operation for computing label error rate as levenshtein distance from our prediction and label
+        :param decoded: decoded sparse
+        :param tf.sparse_placeholder_label: transcript label as sparse placeholder
+        :param tf.placeholder seq_length: length of audio sequence
+        :return: label_error
+        """
 
         label_errors = tf.edit_distance(tf.cast(decoded, tf.int32), tf.cast(sparse_label, tf.int32))
 

@@ -15,9 +15,12 @@ from src.dataset.VCTKDataset import VCTKDataset
 from src.utils import text_utils
 
 
+"""!DEPRECATED!"""
+
 FIRST_INDEX = ord('a') - 1  # 0 is reserved to space
 
 def train_network(dataset, config_reader, is_vctk):
+    """!DEPRECATED! Old ugly trainer"""
 
     logs_path = config_reader.get_tensorboard_logs_path()
 

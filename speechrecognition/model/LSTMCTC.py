@@ -3,14 +3,16 @@ import tensorflow as tf
 from src.model.CTCNetwork import CTCNetwork
 
 
+"""!DEPRECATED!"""
 class LSTMCTC(CTCNetwork):
-    """" Network with LSTM cells and CTC
+    """"
+    !DEPRECATED!
+    Network with LSTM cells and CTC
 
     Args:
-        num_hidden (int) - number of LSTM cells in one layer
-        num_layer (int) - number of LSTM layers
-        num_classes (int) - number of LSTM cells in projection layer
-
+    num_hidden (int) - number of LSTM cells in one layer
+    num_layer (int) - number of LSTM layers
+    num_classes (int) - number of LSTM cells in projection layer
     """
 
     def __init__(self, num_hidden, num_layers, num_classes, input_size_vector):

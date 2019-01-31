@@ -1,8 +1,10 @@
 import tensorflow as tf
 
-
+"""!DEPRECATED!"""
 class CTCNetwork(object):
-    """ Connectionist Temporal Classification (CTC) network.
+    """
+    !DEPRECATED!
+    Connectionist Temporal Classification (CTC) network.
     Args:
         input_size_vector (int) - dimension of input vector
 

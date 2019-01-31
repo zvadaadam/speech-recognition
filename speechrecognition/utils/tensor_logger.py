@@ -2,23 +2,29 @@ import os
 import tensorflow as tf
 
 class TensorLogger:
-
-
+    """
+    TensorLogger object helps to log the training/testing progress in Tensorboard
+    """
     def __init__(self, log_path, session):
+        """
+
+        :param str log_path: path where we keep the logs
+        :param tf.Session session: tensorflow session
+        """
         self.session = session
         self.summary_placeholders = {}
         self.summary_ops = {}
         self.train_summary_writer = tf.summary.FileWriter(os.path.join(log_path, "train"), self.session.graph)
         self.test_summary_writer = tf.summary.FileWriter(os.path.join(log_path, "test"))
 
-    # it can summarize scalars
+
     def log_scalars(self, step, summarizer="train", scope="", summaries_dict=None):
         """
-        :param step: the step of the summary
-        :param summarizer: use the train summary writer or the test one
+        Logs the scalars of decoded string in Tensorboard
+        :param int step: the step of the summary
+        :param str summarizer: use the train summary writer or the test one
         :param scope: variable scope
-        :param summaries_dict: the dict of the summaries values (tag,value)
-        :return:
+        :param tuple summaries_dict: the dict of the summaries values (tag,value)
         """
 
         summary_writer = self.train_summary_writer if summarizer == "train" else self.test_summary_writer
