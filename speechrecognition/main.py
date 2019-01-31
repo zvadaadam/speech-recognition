@@ -1,6 +1,6 @@
 import click
 from speechrecognition.config.config_reader import ConfigReader
-from speechrecognition.predict.main_predict import main_predict
+from speechrecognition.predicter.main_predict import main_predict
 from speechrecognition.trainer.main_train import main_train
 
 @click.group()
