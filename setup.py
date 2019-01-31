@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
 
-with open('README.rst') as f:
+with open('README.md') as f:
     long_description = ''.join(f.readlines())
 
+print(find_packages())
 
 setup(
     name='speech-recognition',
@@ -16,6 +17,11 @@ setup(
     url='https://github.com/zvadaadam',
     zip_safe=False,
     packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'speechrecognition = speechrecognition.main:speech',
+        ]
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Console',

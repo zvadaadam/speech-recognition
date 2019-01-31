@@ -1,7 +1,7 @@
 import tensorflow as tf
 from speechrecognition.dataset.dataset import Dataset
 from speechrecognition.model.rnn_model import RNNModel
-from speechrecognition.trainer.trainer import SpeechTrainer
+from speechrecognition.trainer.speech_train import SpeechTrainer
 
 
 def main_train(config):
