@@ -6,3 +6,4 @@ tqdm
 librosa
 scikit-learn
 click
+pytest
