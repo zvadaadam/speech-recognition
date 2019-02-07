@@ -25,8 +25,23 @@ def test_read_vctk_dataset(vctk_dataset):
     assert len(vctk_dataset._test_audios) == 3
 
 
+def test_speech_targets(vctk_dataset):
+
+    x, y_sparse, x_length = vctk_dataset.transform_to_speech_targets(vctk_dataset._train_audios, vctk_dataset._train_labels)
+
+    assert x.shape[1] > 0
+    assert x.shape[2] == vctk_dataset.num_features
+    assert x.shape[0] == len(x_length)
+    assert y_sparse[0].shape[0] == y_sparse[1].shape[0]
+
+
 
 if __name__ == '__main__':
 
-    test_read_digit_dataset('/fixtures/config/lstm_ctc.yml')
-    test_read_vctk_dataset('/fixtures/config/lstm_ctc_vctk.yml')
+    from speechrecognition.config.config_reader import ConfigReader
+    from speechrecognition.dataset.vctk_dataset import VCTKDataset
+
+    config = ConfigReader(ABS_PATH + '/fixtures/config/lstm_ctc_vctk.yml')
+
+    vctk_dataset = VCTKDataset(config.dataset_path(), config.num_speakers(), config.feature_size(), config.num_context())
+    test_speech_targets(vctk_dataset)

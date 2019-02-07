@@ -17,6 +17,8 @@ setup(
     url='https://github.com/zvadaadam',
     zip_safe=False,
     packages=find_packages(),
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'speechrecognition = speechrecognition.main:speech',
