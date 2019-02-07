@@ -1,3 +1,4 @@
+import os, sys
 import tensorflow as tf
 from speechrecognition.dataset.dataset import Dataset
 from speechrecognition.model.rnn_model import RNNModel
@@ -9,7 +10,6 @@ def main_train(config):
     Man for running the training process specified by config
     :param ConfigReader config: config reader object
     """
-
     dataset = Dataset(config)
     session = tf.Session()
 
@@ -26,6 +26,7 @@ if __name__ == '__main__':
 
     from speechrecognition.config.config_reader import ConfigReader
 
-    config_path = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc.yml'
+    #config_path = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/config/lstm_ctc.yml'
+    config_path = '/Users/adamzvada/Documents/School/BP/SpeechRecognition/test/fixtures/config/lstm_ctc.yml'
 
     main_train(ConfigReader(config_path))

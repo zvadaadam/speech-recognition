@@ -1,4 +1,5 @@
 import yaml
+import os
 from speechrecognition.helper.singleton import Singleton
 
 
@@ -18,6 +19,8 @@ class ConfigReader(object): #, metaclass=Singleton):
 
         :param str config_path: path to your .yaml config file
         """
+
+        self.ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
         print("Processing CONFIG in filename: ", config_path)
 
@@ -52,7 +55,10 @@ class ConfigReader(object): #, metaclass=Singleton):
         """
         Path to the local dataset, requires the official structure.
         """
-        return self.dataset['dataset_path']
+
+        path = self.dataset['dataset_path']
+
+        return self._absolute_path(path)
 
     def dataset_label_type(self):
         """
@@ -147,14 +153,19 @@ class ConfigReader(object): #, metaclass=Singleton):
         Path to the Tensorboard logs of the training/testing summary.
         This is gonna be your Tensorboard logdir.
         """
-        return self.model['tensorboard_path']
+
+        path = self.model['tensorboard_path']
+
+        return self._absolute_path(path)
 
     def get_trained_model_path(self):
         """
         Path to the trained models.
         That's the place where the latest checkpoints will be loaded from or directory where it will be saved.
         """
-        return self.model['trained_path']
+        path = self.model['trained_path']
+
+        return self._absolute_path(path)
 
     def model_description(self):
         """
@@ -167,4 +178,16 @@ class ConfigReader(object): #, metaclass=Singleton):
         Full path to trained model which you want to load up.
         If you leave it empty, then the latest checkpoint will be processed or maybe nothing :D
         """
-        return self.model['restore_trained_model']
+        path = self.model['restore_trained_model']
+
+        if path == None:
+            return None
+
+        return self._absolute_path(path)
+
+    def _absolute_path(self, path):
+
+        if not os.path.isabs(path):
+            return os.path.join(self.ROOT_DIR, path)
+
+        return path
