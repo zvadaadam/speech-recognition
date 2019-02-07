@@ -31,11 +31,13 @@ class DigitDataset(DatasetBase):
         self.read_digit_dataset(dataset_path)
 
 
-    def read_digit_dataset(self, dataset_path):
+    def read_digit_dataset(self, dataset_path=None):
         """
         Function fetches all filenames in dataset folder and loads the file to memory and performs speech preprocessing.
         :param str dataset_path: path to digit dataset locally
         """
+
+        dataset_path = dataset_path or self.dataset_path
 
         print(f'Preparing Digit Dataset from path {dataset_path}')
 

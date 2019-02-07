@@ -24,6 +24,7 @@ class VCTKDataset(DatasetBase):
         DatasetBase.__init__(self, num_features, num_context)
 
         self.dataset_path = dataset_path
+        self.num_speakers = num_speakers
 
         self._train_audios = []
         self._train_labels = []
@@ -39,6 +40,9 @@ class VCTKDataset(DatasetBase):
         :param str dataset_path: path to digit dataset locally
         :param int num_speakers: number of speakers to be retrived
         """
+
+        dataset_path = dataset_path or self.dataset_path
+        num_speakers = num_speakers or self.num_speakers
 
         audio_filenames, label_filenames = self.get_dataset_filenames(dataset_path, num_speakers)
 
@@ -83,13 +87,13 @@ class VCTKDataset(DatasetBase):
         :param int num_speakers: number of speakers to be retrived
         """
 
-        if dataset_path is not None:
-            self.dataset_path = dataset_path
+        dataset_path = dataset_path or self.dataset_path
+        num_speakers = num_speakers or self.num_speakers
 
-        print("Retriving all filenames for VCTK training dataset from path", self.dataset_path)
+        print("Retriving all filenames for VCTK training dataset from path", dataset_path)
 
-        audio_dataset_path = os.path.join(self.dataset_path, 'wav48')
-        label_dataset_path = os.path.join(self.dataset_path, 'txt')
+        audio_dataset_path = os.path.join(dataset_path, 'wav48')
+        label_dataset_path = os.path.join(dataset_path, 'txt')
 
         # gets list of directories for diffrent speakers
         speakers_dirs = os.listdir(audio_dataset_path)
