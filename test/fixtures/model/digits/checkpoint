@@ -1,0 +1,3 @@
+model_checkpoint_path: "/Users/adamzvada/Documents/School/BP/SpeechRecognition/test/fixtures/model/digits/RNN_l2_h100_b16-6050"
+all_model_checkpoint_paths: "/Users/adamzvada/Documents/School/BP/SpeechRecognition/test/fixtures/model/digits/RNN_l2_h100_b16-6050"
+all_model_checkpoint_paths: "/Users/adamzvada/Documents/School/BP/SpeechRecognition/test/fixtures/model/digits/RNN_l2_h100_b16-6050"
